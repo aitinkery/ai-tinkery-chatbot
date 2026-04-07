@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tinkery Chatbot | Stanford</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #E8620A;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-family: 'Bungee', cursive;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .chat-header .logo {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #E8620A;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: #333;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: #E8620A;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .quick-reply-btn {
+            background: white;
+            border: 2px solid #E8620A;
+            color: #E8620A;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .quick-reply-btn:hover {
+            background: #E8620A;
+            color: white;
+        }
+
+        .activity-card {
+            background: linear-gradient(135deg, #E8620A 0%, #c7520a 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .activity-card h4 {
+            font-family: 'Bungee', cursive;
+            margin-bottom: 8px;
+        }
+
+        .activity-card p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .activity-meta {
+            font-size: 12px;
+            opacity: 0.8;
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #f0f0f0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            font-family: 'Source Sans 3', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: #E8620A;
+        }
+
+        .send-btn {
+            background: #E8620A;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: #c7520a;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 12px 18px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #E8620A;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .link {
+            color: #E8620A;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="logo">🔧</div>
+            <div>AI Tinkery</div>
+        </div>
+        
+        <div class="chat-messages" id="messages"></div>
+        
+        <div class="chat-input-container">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="userInput" 
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+            <button class="send-btn" id="sendBtn">➤</button>
+        </div>
+    </div>
+
+    <script>
+        // Activity data from Airtable
+        const ACTIVITIES = [
+            {
+                name: "Build-a-Bot",
+                type: "Task Card",
+                time: "45 minutes",
+                audience: ["Teacher"],
+                description: "Create a custom chatbot using bot101.app",
+                link: "https://docs.google.com/document/u/0/d/15v_Dk8dOMQzPIRnj9ft5Ihjyf3X2j5H3RVdmFYALePg/edit",
+                category: "Create With AI",
+                keywords: ["chatbot", "bot", "create", "build", "custom"]
+            },
+            {
+                name: "Learning Math with AI",
+                type: "Task Card",
+                time: "20 minutes - 1 hour",
+                audience: ["Student"],
+                description: "Experience learning math with the help of an LLM",
+                link: "https://docs.google.com/document/d/1i8BPY3XOkEUNViFEZzXt19EinpntNhFuphSQhWFzSBE/edit",
+                category: "Learn/Teach With AI",
+                keywords: ["math", "learning", "student", "education", "llm"]
+            },
+            {
+                name: "Creativity in the Age of AI",
+                type: "Facilitator Instructions",
+                time: "1 hour - 2 hours",
+                audience: ["Teacher", "Student"],
+                description: "Read and discuss three articles about creativity and AI from the Stanford d.school",
+                link: "https://docs.google.com/document/d/1HVtq9IDamGjF_djwOBUkVRTbosBMsZ0dO1rtL7nzzds/edit",
+                category: "Critique AI",
+                keywords: ["creativity", "critical", "discussion", "reading", "d.school"]
+            },
+            {
+                name: "Gradiants",
+                type: "Slide Deck",
+                time: "30 minutes - 1 hour",
+                audience: ["Teacher"],
+                description: "Map what aspects of work should/can use AI",
+                link: "https://docs.google.com/presentation/d/1vTRPwDi5aCvmXgigBTn5RVBR2PpVrCj4zp0y-JLJF9k/edit",
+                category: "Use AI",
+                keywords: ["work", "mapping", "teacher", "workflow", "planning"]
+            },
+            {
+                name: "Teachable Machine: Pose Model",
+                type: "Task Card",
+                time: "30 minutes",
+                audience: ["Student"],
+                description: "Train your own AI model with poses - reveals how machine learning works through examples, patterns, and predictions",
+                link: "https://docs.google.com/document/d/1Z0sdRHZBtllmfec2Rc9B1sH6ujNJHqyH/edit",
+                category: "Shape AI",
+                keywords: ["machine learning", "training", "model", "teachable machine", "hands-on", "ml"]
+            },
+            {
+                name: "Prompting Without a Keyboard",
+                type: "Task Card",
+                time: "30 minutes",
+                audience: ["Student"],
+                description: "Explore voice-based prompting - practice thinking out loud to an AI",
+                link: "https://docs.google.com/document/d/1P596JWnkat5OqR4p9QdOCX7TKfxj_YpE/edit",
+                category: "Use AI",
+                keywords: ["voice", "prompting", "speaking", "conversational", "accessibility"]
+            },
+            {
+                name: "AI Game Creator",
+                type: "Task Card",
+                time: "30 minutes - 1 hour",
+                audience: ["Student"],
+                description: "Build playable educational games using Rosebud AI, Google Gemini Canvas, and Lovable",
+                link: "https://docs.google.com/document/d/1a_45vs8vzJDisMhxZpb9EHdOZ3vvFig7/edit",
+                category: "Create With AI",
+                keywords: ["game", "coding", "creative", "build", "interactive"]
+            },
+            {
+                name: "AI or Not? (Virtual)",
+                type: "Slide Deck",
+                time: "15 minutes - 30 minutes",
+                audience: ["Teacher", "Student"],
+                description: "Sort cards into AI or Not and generalize a rule",
+                link: "https://docs.google.com/presentation/d/1hRJXgnh4A2h003EzyXEMq6ne5S9xsBL0Y-NiAZM4alw/edit",
+                category: "Learn About AI",
+                keywords: ["classification", "sorting", "understanding", "basics", "introduction"]
+            },
+            {
+                name: "Prompting Lab",
+                type: "Slide Deck",
+                time: "30 minutes",
+                audience: ["Teacher", "Student"],
+                description: "Experiment with structured, conversational, and meta prompting strategies",
+                link: "https://docs.google.com/presentation/d/1_nbaYNLJSqbGPBrjW0q3z9JOjqdau7-caVzaynM-mOg/edit",
+                category: "Use AI",
+                keywords: ["prompting", "strategies", "experimentation", "practice"]
+            },
+            {
+                name: "LLM Learning Modes",
+                type: "Slide Deck",
+                time: "30 minutes - 1 hour",
+                audience: ["Teacher"],
+                description: "Compare normal mode to learning mode across LLMs",
+                link: "https://docs.google.com/presentation/d/1e7bQQ_TdcncLjkYlr7M1YBXwuocTho-28--SIPd37ok/edit",
+                category: "Learn About AI",
+                keywords: ["llm", "modes", "comparison", "teacher", "advanced"]
+            },
+            {
+                name: "Instructional Materials GenAI",
+                type: "Task Card",
+                time: "45 minutes - 1 hour",
+                audience: ["Teacher"],
+                description: "Create an instructional material to meet a learning objective",
+                link: "https://docs.google.com/document/d/1SsPuM45IlhBzIP8HeDfja2prgEYZhaWV2M7cLgpHTHw/edit",
+                category: "Learn/Teach With AI",
+                keywords: ["teaching", "materials", "curriculum", "lesson", "design"]
+            },
+            {
+                name: "Vibe Code a Website",
+                type: "Task Card",
+                time: "30 minutes - 1 hour",
+                audience: ["Teacher"],
+                description: "Step-by-step guide to deploy a vibe coded tool",
+                link: "https://docs.google.com/document/d/1Kl3G3DP1_7Gl5HpMl_5QrXallxb9sKoBz2I3qaySpbA/edit",
+                category: "Create With AI",
+                keywords: ["coding", "website", "deployment", "vibe", "technical"]
+            },
+            {
+                name: "Feedback & Assessments with AI",
+                type: "Slide Deck",
+                time: "30 minutes - 1 hour",
+                audience: ["Teacher"],
+                description: "Set up ChatGPT to provide feedback on student work",
+                link: "https://docs.google.com/presentation/d/1Mz0jUSYyeK3OunjA3TG53cH9dRe4NpCapcxNAAf1CtM/edit",
+                category: "Learn/Teach With AI",
+                keywords: ["feedback", "assessment", "grading", "teaching", "chatgpt"]
+            },
+            {
+                name: "Evaluating GenAI Images",
+                type: "Task Card",
+                time: "1 hour",
+                audience: ["Teacher", "Student"],
+                description: "Create AI images and evaluate them for stereotypes and biases",
+                link: "https://docs.google.com/document/d/1newdAI7kplwf7LiPFuwkjGMQPn9DOb5IuX5C022c7jc/edit",
+                category: "Critique AI",
+                keywords: ["bias", "images", "critical", "stereotypes", "ethics"]
+            },
+            {
+                name: "Meta-prompting",
+                type: "Task Card",
+                time: "30 minutes",
+                audience: ["Student"],
+                description: "Use a chatbot to design, refine, and optimize prompts",
+                link: "https://docs.google.com/document/d/1chUWs6xPlJjm_yxLVZNmGauoISGgIcWwgV6JptEESyQ/edit",
+                category: "Use AI",
+                keywords: ["prompting", "meta", "advanced", "optimization"]
+            },
+            {
+                name: "DIY Agent with Zapier Agents",
+                type: "Task Card",
+                time: "30 minutes - 1 hour",
+                audience: ["Student"],
+                description: "Design an agent that handles birthdays for a teacher",
+                link: "https://docs.google.com/document/d/19JD2DBldUBDQ0SqASOtA8_7q5tE5XlNrRU9Zitv2SCA/edit",
+                category: "Shape AI",
+                keywords: ["agent", "automation", "zapier", "building", "practical"]
+            },
+            {
+                name: "Brainstorming AI Use Cases",
+                type: "Slide Deck",
+                time: "15 minutes - 1 hour",
+                audience: ["Teacher", "Student"],
+                description: "Brainstorm AI use cases by role/context; Risk vs Reward Map",
+                link: "https://docs.google.com/presentation/d/1y9KGDG_kqMfMZwz9ijh_DlMOjxBtMEy2B49j9UXqx8c/edit",
+                category: "Critique AI",
+                keywords: ["brainstorm", "use cases", "risk", "reward", "planning"]
+            },
+            {
+                name: "Literature Review Strategy with GenAI",
+                type: "Task Card",
+                time: "15 minutes",
+                audience: ["Student"],
+                description: "Use AI to assist with the literature review process",
+                link: "https://docs.google.com/document/u/0/d/1SwHCjFkJlHNHBH848Ey9lARpH9e3b75tqnTFnqZrGac/edit",
+                category: "Learn/Teach With AI",
+                keywords: ["research", "literature", "academic", "writing", "student"]
+            },
+            {
+                name: "Prompting Environmental Impact",
+                type: "Task Card",
+                time: "30 minutes",
+                audience: ["Student"],
+                description: "Practice structuring prompts for environmental efficiency without losing quality",
+                link: "https://docs.google.com/document/d/1TZT-0s6SUqeAyaGb6Xrh74XAdlhF2bFF_rSO04xoP5g/edit",
+                category: "Critique AI",
+                keywords: ["environment", "sustainability", "efficiency", "ethics", "climate"]
+            }
+        ];
+
+        // State management
+        let state = {
+            userName: null,
+            affiliation: null,
+            onboardingStep: 'welcome',
+            currentActivity: null,
+            interests: [],
+            conversationHistory: []
+        };
+
+        // Load state from localStorage
+        function loadState() {
+            const saved = localStorage.getItem('aiTinkeryState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+            }
+        }
+
+        // Save state to localStorage
+        function saveState() {
+            localStorage.setItem('aiTinkeryState', JSON.stringify(state));
+        }
+
+        // Initialize
+        const messagesContainer = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        loadState();
+
+        // Add message to chat
+        function addMessage(content, isUser = false, includeAvatar = true) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            if (includeAvatar) {
+                const avatar = document.createElement('div');
+                avatar.className = 'message-avatar';
+                avatar.textContent = isUser ? '👤' : '🔧';
+                messageDiv.appendChild(avatar);
+            }
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            if (typeof content === 'string') {
+                contentDiv.innerHTML = content;
+            } else {
+                contentDiv.appendChild(content);
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            if (!isUser) {
+                state.conversationHistory.push({ type: 'bot', content: content.textContent || content });
+            } else {
+                state.conversationHistory.push({ type: 'user', content });
+            }
+            saveState();
+        }
+
+        // Show typing indicator
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typing-indicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = '🔧';
+            typingDiv.appendChild(avatar);
+
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+            typingDiv.appendChild(indicator);
+            
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing-indicator');
+            if (typing) typing.remove();
+        }
+
+        // Add quick replies
+        function addQuickReplies(replies) {
+            const container = document.createElement('div');
+            container.className = 'quick-replies';
+            
+            replies.forEach(reply => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = reply.text;
+                btn.onclick = () => {
+                    handleUserMessage(reply.value || reply.text);
+                    container.remove();
+                };
+                container.appendChild(btn);
+            });
+            
+            messagesContainer.appendChild(container);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Create activity card
+        function createActivityCard(activity) {
+            const card = document.createElement('div');
+            card.className = 'activity-card';
+            card.onclick = () => handleActivityClick(activity);
+            
+            card.innerHTML = `
+                <h4>${activity.name}</h4>
+                <p>${activity.description}</p>
+                <div class="activity-meta">
+                    <span>⏱ ${activity.time}</span>
+                    <span>👥 ${activity.audience.join(', ')}</span>
+                    <span>📂 ${activity.category}</span>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Handle activity click
+        function handleActivityClick(activity) {
+            state.currentActivity = activity;
+            saveState();
+            
+            setTimeout(() => {
+                showTyping();
+                setTimeout(() => {
+                    hideTyping();
+                    addMessage(`Great choice! Let's explore <strong>${activity.name}</strong>.`);
+                    
+                    setTimeout(() => {
+                        showTyping();
+                        setTimeout(() => {
+                            hideTyping();
+                            addMessage(`This activity is designed for <strong>${activity.audience.join(' and ')}</strong> and takes about <strong>${activity.time}</strong> to complete.`);
+                            
+                            setTimeout(() => {
+                                showTyping();
+                                setTimeout(() => {
+                                    hideTyping();
+                                    addMessage(`<strong>What you'll do:</strong> ${activity.description}`);
+                                    
+                                    setTimeout(() => {
+                                        showTyping();
+                                        setTimeout(() => {
+                                            hideTyping();
+                                            addMessage(`You can access the full activity guide here: <a href="${activity.link}" target="_blank" class="link">${activity.name} Activity Guide</a>`);
+                                            
+                                            setTimeout(() => {
+                                                addQuickReplies([
+                                                    { text: '🔍 Find another activity', value: 'show activities' },
+                                                    { text: '❓ Learn more about the Tinkery', value: 'tell me more' },
+                                                    { text: '🔄 Start over', value: 'restart' }
+                                                ]);
+                                            }, 800);
+                                        }, 1000);
+                                    }, 800);
+                                }, 1200);
+                            }, 800);
+                        }, 1200);
+                    }, 800);
+                }, 1500);
+            }, 500);
+        }
+
+        // Recommend activities based on interests
+        function recommendActivities(interests) {
+            const interestWords = interests.toLowerCase().split(/\s+/);
+            
+            const scored = ACTIVITIES.map(activity => {
+                let score = 0;
+                interestWords.forEach(word => {
+                    if (activity.keywords.some(kw => kw.includes(word) || word.includes(kw))) {
+                        score += 3;
+                    }
+                    if (activity.name.toLowerCase().includes(word)) score += 2;
+                    if (activity.description.toLowerCase().includes(word)) score += 1;
+                    if (activity.category.toLowerCase().includes(word)) score += 2;
+                });
+                return { activity, score };
+            });
+
+            scored.sort((a, b) => b.score - a.score);
+            
+            const topActivities = scored.slice(0, 3).filter(s => s.score > 0);
+            
+            if (topActivities.length === 0) {
+                // Random selection if no matches
+                return ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 3);
+            }
+            
+            return topActivities.map(s => s.activity);
+        }
+
+        // Bot responses
+        function botRespond(userMessage) {
+            const msg = userMessage.toLowerCase().trim();
+
+            // Onboarding flow
+            if (!state.userName) {
+                if (state.onboardingStep === 'welcome') {
+                    state.onboardingStep = 'name';
+                    saveState();
+                    return {
+                        messages: ["What's your name?"],
+                        quickReplies: null
+                    };
+                } else if (state.onboardingStep === 'name') {
+                    state.userName = userMessage.trim();
+                    state.onboardingStep = 'affiliation';
+                    saveState();
+                    return {
+                        messages: [`Nice to meet you, ${state.userName}! 👋`, 
+                                   "What's your affiliation? (e.g., school, university, organization)"],
+                        quickReplies: null
+                    };
+                } else if (state.onboardingStep === 'affiliation') {
+                    state.affiliation = userMessage.trim();
+                    state.onboardingStep = 'complete';
+                    saveState();
+                    return {
+                        messages: [
+                            `Great! Thanks for sharing, ${state.userName} from ${state.affiliation}.`,
+                            "I'm here to help you explore the <strong>AI Tinkery</strong> — a space to play, tinker, and learn about AI in hands-on, creative ways.",
+                            "What would you like to do?"
+                        ],
+                        quickReplies: [
+                            { text: '🎯 Explore activities', value: 'show activities' },
+                            { text: '📚 Learn about the Tinkery', value: 'tell me more' },
+                            { text: '🤔 What can I do here?', value: 'what can i do' }
+                        ]
+                    };
+                }
+            }
+
+            // Help / what can I do
+            if (msg.includes('help') || msg.includes('what can') || msg.includes('how do')) {
+                return {
+                    messages: [
+                        "I can help you with:",
+                        "• Discover hands-on AI activities based on your interests",
+                        "• Learn about what the AI Tinkery is and how it works",
+                        "• Get guidance on specific activities from our collection",
+                        "• Connect you with resources and the Tinkery community"
+                    ],
+                    quickReplies: [
+                        { text: '🎯 Explore activities', value: 'show activities' },
+                        { text: '📚 About the Tinkery', value: 'tell me more' }
+                    ]
+                };
+            }
+
+            // About the Tinkery
+            if (msg.includes('tell me more') || msg.includes('what is') || msg.includes('about')) {
+                return {
+                    messages: [
+                        "The <strong>AI Tinkery</strong> is a place to play and tinker with AI — to better understand, use, and shape it.",
+                        "We believe learning happens through <strong>doing</strong>. No experience required!",
+                        "Our approach is built on four principles:",
+                        "🤝 <strong>Collaborative</strong> — Learning through community dialogue",
+                        "❤️ <strong>Human-centered</strong> — Valuing multiple perspectives",
+                        "🔧 <strong>Applied</strong> — Trying, testing, and learning by doing",
+                        "💭 <strong>Thoughtful</strong> — Understanding AI as a system to be questioned and shaped",
+                        "We have <strong>26 hands-on activities</strong> across six categories:",
+                        "• Learn About AI",
+                        "• Use AI",
+                        "• Create With AI",
+                        "• Learn/Teach With AI",
+                        "• Shape AI",
+                        "• Critique AI"
+                    ],
+                    quickReplies: [
+                        { text: '🎯 Show me activities', value: 'show activities' },
+                        { text: '🌐 Join the community', value: 'community' },
+                        { text: '🚀 How to start?', value: 'how to start' }
+                    ]
+                };
+            }
+
+            // Community / Satellite Network
+            if (msg.includes('community') || msg.includes('network') || msg.includes('connect')) {
+                return {
+                    messages: [
+                        "The <strong>AI Tinkery Satellite Network</strong> is a growing community of educators and schools experimenting with AI together.",
+                        "Satellites connect through <strong>quarterly meetups</strong> to share what works, reflect on challenges, and imagine what comes next.",
+                        "You can join by visiting <a href='https://ai-tinkery.stanford.edu' target='_blank' class='link'>ai-tinkery.stanford.edu</a> and signing up!",
+                        "Share your experiments using <strong>#AITinkery</strong> and <strong>#StanfordAcceleratorforLearning</strong>"
+                    ],
+                    quickReplies: [
+                        { text: '🎯 Explore activities', value: 'show activities' },
+                        { text: '🏫 Launch a Tinkery', value: 'launch tinkery' }
+                    ]
+                };
+            }
+
+            // How to launch a Tinkery
+            if (msg.includes('launch') || msg.includes('start') || msg.includes('create tinkery')) {
+                return {
+                    messages: [
+                        "Starting your own Tinkery is flexible! Here's how:",
+                        "<strong>1. Create a space, try some activities</strong><br>Pick one activity and set it up in your classroom or hallway. Let learners engage!",
+                        "<strong>2. Share with others</strong><br>Document what you tried and share online using #AITinkery",
+                        "<strong>3. Join the Satellite Network</strong><br>Connect with other educators at quarterly community meetups",
+                        "A Tinkery can be:",
+                        "• A hallway display (Curiosity Board)",
+                        "• A class warm-up activity",
+                        "• A dedicated room or makerspace",
+                        "• Drop-in workshop sessions",
+                        "Start small and grow from there!"
+                    ],
+                    quickReplies: [
+                        { text: '🎯 See activities', value: 'show activities' },
+                        { text: '🌐 Join the network', value: 'community' }
+                    ]
+                };
+            }
+
+            // Show all activities / browse
+            if (msg.includes('show') || msg.includes('activities') || msg.includes('explore') || msg.includes('browse')) {
+                return {
+                    messages: [
+                        "Perfect! Let's find activities that match your interests.",
+                        "What are you interested in exploring? (e.g., 'creating games', 'teaching with AI', 'understanding bias', 'building chatbots')"
+                    ],
+                    quickReplies: [
+                        { text: 'Creating things', value: 'creating building making' },
+                        { text: 'Teaching & learning', value: 'teaching learning education' },
+                        { text: 'Critical thinking', value: 'bias ethics critical' },
+                        { text: 'Show me everything', value: 'all activities' }
+                    ]
+                };
+            }
+
+            // All activities - show random selection
+            if (msg.includes('all activities') || msg.includes('everything') || msg.includes('see all')) {
+                const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 5);
+                return {
+                    messages: [
+                        "Here are some activities you might enjoy:",
+                        ...randomActivities.map(createActivityCard),
+                        "Tap any activity to learn more! Or tell me what interests you and I can recommend something specific."
+                    ],
+                    quickReplies: null
+                };
+            }
+
+            // Recommend based on interests
+            if (msg.length > 10 && !msg.includes('show') && !msg.includes('tell')) {
+                state.interests.push(userMessage);
+                saveState();
+                
+                const recommended = recommendActivities(userMessage);
+                
+                if (recommended.length > 0) {
+                    return {
+                        messages: [
+                            `Based on your interest in "${userMessage}", here are some activities I think you'll like:`,
+                            ...recommended.map(createActivityCard),
+                            "Tap any activity to get started!"
+                        ],
+                        quickReplies: [
+                            { text: '🔍 Search again', value: 'show activities' },
+                            { text: '📚 About the Tinkery', value: 'tell me more' }
+                        ]
+                    };
+                } else {
+                    return {
+                        messages: [
+                            "I couldn't find a perfect match, but here are some popular activities:",
+                            ...ACTIVITIES.slice(0, 3).map(createActivityCard)
+                        ],
+                        quickReplies: [
+                            { text: '🔍 Try another search', value: 'show activities' }
+                        ]
+                    };
+                }
+            }
+
+            // Restart
+            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over')) {
+                state = {
+                    userName: null,
+                    affiliation: null,
+                    onboardingStep: 'welcome',
+                    currentActivity: null,
+                    interests: [],
+                    conversationHistory: []
+                };
+                saveState();
+                location.reload();
+                return { messages: [], quickReplies: null };
+            }
+
+            // Default response
+            return {
+                messages: [
+                    "I'm not sure I understand. Here's what I can help with:",
+                    "• <strong>Explore activities</strong> — Find hands-on AI activities",
+                    "• <strong>Learn about the Tinkery</strong> — Understand our approach",
+                    "• <strong>Join the community</strong> — Connect with other educators",
+                    "What interests you?"
+                ],
+                quickReplies: [
+                    { text: '🎯 Explore activities', value: 'show activities' },
+                    { text: '📚 About the Tinkery', value: 'tell me more' },
+                    { text: '❓ What can you do?', value: 'help' }
+                ]
+            };
+        }
+
+        // Handle user message
+        function handleUserMessage(message) {
+            if (!message || message.trim() === '') return;
+
+            // Add user message
+            addMessage(message, true);
+            userInput.value = '';
+
+            // Show typing
+            showTyping();
+
+            // Get bot response
+            setTimeout(() => {
+                hideTyping();
+                const response = botRespond(message);
+                
+                response.messages.forEach((msg, index) => {
+                    setTimeout(() => {
+                        if (typeof msg === 'string') {
+                            showTyping();
+                            setTimeout(() => {
+                                hideTyping();
+                                addMessage(msg);
+                                
+                                // Add quick replies after last message
+                                if (index === response.messages.length - 1 && response.quickReplies) {
+                                    setTimeout(() => {
+                                        addQuickReplies(response.quickReplies);
+                                    }, 500);
+                                }
+                            }, 800);
+                        } else {
+                            // It's an element (activity card)
+                            addMessage(msg);
+                            
+                            // Add quick replies after last message
+                            if (index === response.messages.length - 1 && response.quickReplies) {
+                                setTimeout(() => {
+                                    addQuickReplies(response.quickReplies);
+                                }, 500);
+                            }
+                        }
+                    }, index * 1200);
+                });
+            }, 1000);
+        }
+
+        // Event listeners
+        sendBtn.addEventListener('click', () => {
+            handleUserMessage(userInput.value);
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleUserMessage(userInput.value);
+            }
+        });
+
+        // Initial greeting
+        window.addEventListener('load', () => {
+            if (!state.userName) {
+                setTimeout(() => {
+                    addMessage("👋 Hi there! Welcome to the <strong>AI Tinkery</strong> at Stanford.");
+                    setTimeout(() => {
+                        showTyping();
+                        setTimeout(() => {
+                            hideTyping();
+                            addMessage("We're a space to play, tinker, and learn about AI in hands-on, creative ways.");
+                            setTimeout(() => {
+                                showTyping();
+                                setTimeout(() => {
+                                    hideTyping();
+                                    addMessage("Before we get started, I'd love to get to know you!");
+                                    setTimeout(() => {
+                                        handleUserMessage('start');
+                                    }, 1000);
+                                }, 1200);
+                            }, 800);
+                        }, 1500);
+                    }, 1000);
+                }, 500);
+            } else {
+                addMessage(`Welcome back, ${state.userName}! 👋`);
+                setTimeout(() => {
+                    addQuickReplies([
+                        { text: '🎯 Explore activities', value: 'show activities' },
+                        { text: '📚 About the Tinkery', value: 'tell me more' },
+                        { text: '🔄 Start fresh', value: 'restart' }
+                    ]);
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
