@@ -44,8 +44,35 @@
             font-size: 24px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             gap: 15px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .reset-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: 'Source Sans 3', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .reset-btn:hover {
+            background: white;
+            color: #E8620A;
         }
 
         .chat-header .logo {
@@ -291,8 +318,11 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <div class="logo">🔧</div>
-            <div>AI Tinkery</div>
+            <div class="header-title">
+                <div class="logo">🔧</div>
+                <div>AI Tinkery</div>
+            </div>
+            <button class="reset-btn" id="resetBtn">New User</button>
         </div>
         
         <div class="chat-messages" id="messages"></div>
@@ -1083,16 +1113,21 @@
             }
 
             // Restart
-            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over')) {
-                state = {
-                    userName: null,
-                    affiliation: null,
-                    onboardingStep: 'welcome',
-                    currentActivity: null,
-                    interests: [],
-                    conversationHistory: []
+            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
+                return {
+                    messages: [
+                        "Starting fresh! I'll clear the conversation and you can begin again."
+                    ],
+                    quickReplies: [
+                        { text: '✅ Yes, start over', value: 'confirm-reset' },
+                        { text: '❌ Cancel', value: 'help' }
+                    ]
                 };
-                saveState();
+            }
+
+            // Confirm reset
+            if (msg.includes('confirm-reset')) {
+                localStorage.removeItem('aiTinkeryState');
                 location.reload();
                 return { messages: [], quickReplies: null };
             }
@@ -1172,6 +1207,14 @@
             }
         });
 
+        // Reset button
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Start over with a new user? This will clear the current conversation.')) {
+                localStorage.removeItem('aiTinkeryState');
+                location.reload();
+            }
+        });
+
         // Initial greeting
         window.addEventListener('load', () => {
             if (!state.userName) {
@@ -1196,13 +1239,17 @@
                     }, 1000);
                 }, 500);
             } else {
-                addMessage(`Welcome back, ${state.userName}! 👋`);
+                addMessage(`Welcome back, ${state.userName} from ${state.affiliation}! 👋`);
                 setTimeout(() => {
-                    addQuickReplies([
-                        { text: '🎯 Explore activities', value: 'show activities' },
-                        { text: '📚 About the Tinkery', value: 'tell me more' },
-                        { text: '🔄 Start fresh', value: 'restart' }
-                    ]);
+                    addMessage("What would you like to do?");
+                    setTimeout(() => {
+                        addQuickReplies([
+                            { text: '🎯 Explore activities', value: 'show activities' },
+                            { text: '🏫 Launch a Tinkery', value: 'launch tinkery' },
+                            { text: '📚 About the Tinkery', value: 'tell me more' },
+                            { text: '👤 New user?', value: 'new user' }
+                        ]);
+                    }, 800);
                 }, 1000);
             }
         });
