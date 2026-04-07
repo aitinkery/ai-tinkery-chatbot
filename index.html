@@ -76,14 +76,20 @@
         }
 
         .chat-header .logo {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            padding: 5px;
+            flex-shrink: 0;
+        }
+
+        .chat-header .logo svg {
+            width: 100%;
+            height: 100%;
         }
 
         .chat-messages {
@@ -133,6 +139,12 @@
             justify-content: center;
             font-size: 20px;
             flex-shrink: 0;
+            padding: 6px;
+        }
+
+        .message-avatar svg {
+            width: 100%;
+            height: 100%;
         }
 
         .message.user .message-avatar {
@@ -319,7 +331,27 @@
     <div class="chat-container">
         <div class="chat-header">
             <div class="header-title">
-                <div class="logo">🔧</div>
+                <div class="logo">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Robot head -->
+                        <rect x="25" y="30" width="50" height="40" rx="8" fill="#E8620A"/>
+                        <!-- Eyes -->
+                        <circle cx="38" cy="45" r="5" fill="white"/>
+                        <circle cx="62" cy="45" r="5" fill="white"/>
+                        <circle cx="38" cy="45" r="2" fill="#1a1a1a"/>
+                        <circle cx="62" cy="45" r="2" fill="#1a1a1a"/>
+                        <!-- Antenna -->
+                        <line x1="50" y1="30" x2="50" y2="20" stroke="#E8620A" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="50" cy="18" r="4" fill="#E8620A"/>
+                        <!-- Mouth -->
+                        <line x1="40" y1="60" x2="60" y2="60" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Body -->
+                        <rect x="30" y="70" width="40" height="20" rx="4" fill="#E8620A"/>
+                        <!-- Arms -->
+                        <rect x="15" y="75" width="12" height="8" rx="4" fill="#E8620A"/>
+                        <rect x="73" y="75" width="12" height="8" rx="4" fill="#E8620A"/>
+                    </svg>
+                </div>
                 <div>AI Tinkery</div>
             </div>
             <button class="reset-btn" id="resetBtn">New User</button>
@@ -574,7 +606,25 @@
             if (includeAvatar) {
                 const avatar = document.createElement('div');
                 avatar.className = 'message-avatar';
-                avatar.textContent = isUser ? '👤' : '🔧';
+                if (isUser) {
+                    avatar.textContent = '👤';
+                } else {
+                    avatar.innerHTML = `
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="25" y="30" width="50" height="40" rx="8" fill="white"/>
+                            <circle cx="38" cy="45" r="5" fill="#E8620A"/>
+                            <circle cx="62" cy="45" r="5" fill="#E8620A"/>
+                            <circle cx="38" cy="45" r="2" fill="white"/>
+                            <circle cx="62" cy="45" r="2" fill="white"/>
+                            <line x1="50" y1="30" x2="50" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="50" cy="18" r="4" fill="white"/>
+                            <line x1="40" y1="60" x2="60" y2="60" stroke="#E8620A" stroke-width="3" stroke-linecap="round"/>
+                            <rect x="30" y="70" width="40" height="20" rx="4" fill="white"/>
+                            <rect x="15" y="75" width="12" height="8" rx="4" fill="white"/>
+                            <rect x="73" y="75" width="12" height="8" rx="4" fill="white"/>
+                        </svg>
+                    `;
+                }
                 messageDiv.appendChild(avatar);
             }
 
@@ -607,7 +657,21 @@
             
             const avatar = document.createElement('div');
             avatar.className = 'message-avatar';
-            avatar.textContent = '🔧';
+            avatar.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="25" y="30" width="50" height="40" rx="8" fill="white"/>
+                    <circle cx="38" cy="45" r="5" fill="#E8620A"/>
+                    <circle cx="62" cy="45" r="5" fill="#E8620A"/>
+                    <circle cx="38" cy="45" r="2" fill="white"/>
+                    <circle cx="62" cy="45" r="2" fill="white"/>
+                    <line x1="50" y1="30" x2="50" y2="20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                    <circle cx="50" cy="18" r="4" fill="white"/>
+                    <line x1="40" y1="60" x2="60" y2="60" stroke="#E8620A" stroke-width="3" stroke-linecap="round"/>
+                    <rect x="30" y="70" width="40" height="20" rx="4" fill="white"/>
+                    <rect x="15" y="75" width="12" height="8" rx="4" fill="white"/>
+                    <rect x="73" y="75" width="12" height="8" rx="4" fill="white"/>
+                </svg>
+            `;
             typingDiv.appendChild(avatar);
 
             const indicator = document.createElement('div');
