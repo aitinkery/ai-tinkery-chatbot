@@ -511,6 +511,7 @@
             onboardingStep: 'welcome',
             currentActivity: null,
             interests: [],
+            userPath: null, // 'activities' or 'launch'
             conversationHistory: []
         };
 
@@ -731,20 +732,164 @@
                     };
                 } else if (state.onboardingStep === 'affiliation') {
                     state.affiliation = userMessage.trim();
-                    state.onboardingStep = 'complete';
+                    state.onboardingStep = 'discover-path';
                     saveState();
                     return {
                         messages: [
                             `Great! Thanks for sharing, ${state.userName} from ${state.affiliation}.`,
                             "I'm here to help you explore the <strong>AI Tinkery</strong> — a space to play, tinker, and learn about AI in hands-on, creative ways.",
-                            "What would you like to do?"
+                            "What brings you here today?"
                         ],
                         quickReplies: [
-                            { text: '🎯 Explore activities', value: 'show activities' },
-                            { text: '📚 Learn about the Tinkery', value: 'tell me more' },
-                            { text: '🤔 What can I do here?', value: 'what can i do' }
+                            { text: '🎯 Try hands-on AI activities', value: 'path:activities' },
+                            { text: '🏫 Start my own Tinkery', value: 'path:launch' },
+                            { text: '📚 Just learning about the Tinkery', value: 'tell me more' }
                         ]
                     };
+                } else if (state.onboardingStep === 'discover-path') {
+                    if (msg.includes('path:activities') || msg.includes('activities') || msg.includes('try')) {
+                        state.userPath = 'activities';
+                        state.onboardingStep = 'discover-interests';
+                        saveState();
+                        return {
+                            messages: [
+                                "Awesome! Let's find activities that match your interests.",
+                                "What aspects of AI are you most curious about?"
+                            ],
+                            quickReplies: [
+                                { text: '🎨 Creating things with AI', value: 'interest:creating' },
+                                { text: '🧠 Understanding how AI works', value: 'interest:learning' },
+                                { text: '📚 Teaching with AI', value: 'interest:teaching' },
+                                { text: '⚖️ AI ethics & impact', value: 'interest:ethics' },
+                                { text: '🔧 Building AI systems', value: 'interest:building' },
+                                { text: '🤷 Not sure yet', value: 'interest:explore' }
+                            ]
+                        };
+                    } else if (msg.includes('path:launch') || msg.includes('start') || msg.includes('launch')) {
+                        state.userPath = 'launch';
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        return {
+                            messages: [
+                                "Fantastic! Starting your own Tinkery is an exciting journey.",
+                                "The AI Tinkery model is designed to be <strong>flexible and replicable</strong> — you can adapt it to your context.",
+                                "At its core, a Tinkery is built on <strong>four guiding principles:</strong>",
+                                "🤝 <strong>Collaborative</strong> — Learning through community dialogue. No one is an expert; everyone brings knowledge and has something to learn.",
+                                "❤️ <strong>Human-centered</strong> — Making space for questions, valuing multiple perspectives, and paying attention to technology's impact.",
+                                "🔧 <strong>Applied</strong> — Tinkering means trying, testing, remixing, and learning by doing to promote agency and curiosity.",
+                                "💭 <strong>Thoughtful</strong> — Approaching AI not as magic but as a system to be understood, questioned, and shaped.",
+                                "What would you like to explore?"
+                            ],
+                            quickReplies: [
+                                { text: '📐 Tinkery structure & formats', value: 'tinkery structure' },
+                                { text: '👥 Roles & people', value: 'tinkery roles' },
+                                { text: '🚀 How to launch', value: 'launch tinkery' },
+                                { text: '🎯 See example activities', value: 'show activities' }
+                            ]
+                        };
+                    }
+                } else if (state.onboardingStep === 'discover-interests') {
+                    if (msg.includes('interest:creating')) {
+                        state.interests.push('creating', 'building', 'making', 'design');
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const recommended = recommendActivities('creating building making design game image chatbot');
+                        return {
+                            messages: [
+                                "Perfect! You're interested in <strong>creating with AI</strong>.",
+                                "Here are some activities where you'll build and create:",
+                                ...recommended.map(createActivityCard),
+                                "Tap any activity to learn more and get started!"
+                            ],
+                            quickReplies: [
+                                { text: '🔍 Find more activities', value: 'show activities' },
+                                { text: '💡 Different interest', value: 'change interest' }
+                            ]
+                        };
+                    } else if (msg.includes('interest:learning')) {
+                        state.interests.push('learning', 'understanding', 'basics', 'concepts');
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const recommended = recommendActivities('learning understanding AI basics classification teachable machine');
+                        return {
+                            messages: [
+                                "Great choice! You want to <strong>understand how AI works</strong>.",
+                                "These activities will help you build conceptual understanding:",
+                                ...recommended.map(createActivityCard),
+                                "Tap any activity to dive in!"
+                            ],
+                            quickReplies: [
+                                { text: '🔍 Find more activities', value: 'show activities' },
+                                { text: '💡 Different interest', value: 'change interest' }
+                            ]
+                        };
+                    } else if (msg.includes('interest:teaching')) {
+                        state.interests.push('teaching', 'education', 'classroom', 'students');
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const recommended = recommendActivities('teaching education classroom instructional feedback assessment');
+                        return {
+                            messages: [
+                                "Excellent! You're interested in <strong>teaching with AI</strong>.",
+                                "Here are activities designed for educators:",
+                                ...recommended.map(createActivityCard),
+                                "Each one includes facilitation support and is ready for your classroom!"
+                            ],
+                            quickReplies: [
+                                { text: '🔍 Find more activities', value: 'show activities' },
+                                { text: '💡 Different interest', value: 'change interest' }
+                            ]
+                        };
+                    } else if (msg.includes('interest:ethics')) {
+                        state.interests.push('ethics', 'bias', 'critical', 'impact', 'sustainability');
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const recommended = recommendActivities('bias ethics critical stereotypes environment impact');
+                        return {
+                            messages: [
+                                "Important topic! You're interested in <strong>AI ethics and impact</strong>.",
+                                "These activities help you think critically about AI:",
+                                ...recommended.map(createActivityCard),
+                                "Each one encourages questioning, evaluating, and imagining alternatives."
+                            ],
+                            quickReplies: [
+                                { text: '🔍 Find more activities', value: 'show activities' },
+                                { text: '💡 Different interest', value: 'change interest' }
+                            ]
+                        };
+                    } else if (msg.includes('interest:building')) {
+                        state.interests.push('building', 'technical', 'agent', 'model', 'training');
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const recommended = recommendActivities('agent building technical model training machine learning zapier');
+                        return {
+                            messages: [
+                                "Awesome! You want to <strong>build AI systems</strong>.",
+                                "These activities let you create and shape AI:",
+                                ...recommended.map(createActivityCard),
+                                "Get hands-on with building!"
+                            ],
+                            quickReplies: [
+                                { text: '🔍 Find more activities', value: 'show activities' },
+                                { text: '💡 Different interest', value: 'change interest' }
+                            ]
+                        };
+                    } else if (msg.includes('interest:explore')) {
+                        state.onboardingStep = 'complete';
+                        saveState();
+                        const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 4);
+                        return {
+                            messages: [
+                                "No problem! Let's explore a variety of activities:",
+                                ...randomActivities.map(createActivityCard),
+                                "Browse around and see what catches your eye!"
+                            ],
+                            quickReplies: [
+                                { text: '🔄 Show me more', value: 'all activities' },
+                                { text: '💡 I know my interest now', value: 'change interest' }
+                            ]
+                        };
+                    }
                 }
             }
 
@@ -830,18 +975,64 @@
                 };
             }
 
-            // Show all activities / browse
-            if (msg.includes('show') || msg.includes('activities') || msg.includes('explore') || msg.includes('browse')) {
+            // Change interest / discover interests
+            if (msg.includes('change interest') || (msg.includes('show') && msg.includes('activities')) || msg.includes('explore') || msg.includes('browse')) {
                 return {
                     messages: [
-                        "Perfect! Let's find activities that match your interests.",
-                        "What are you interested in exploring? (e.g., 'creating games', 'teaching with AI', 'understanding bias', 'building chatbots')"
+                        "What aspects of AI are you most curious about?"
                     ],
                     quickReplies: [
-                        { text: 'Creating things', value: 'creating building making' },
-                        { text: 'Teaching & learning', value: 'teaching learning education' },
-                        { text: 'Critical thinking', value: 'bias ethics critical' },
-                        { text: 'Show me everything', value: 'all activities' }
+                        { text: '🎨 Creating things with AI', value: 'interest:creating' },
+                        { text: '🧠 Understanding how AI works', value: 'interest:learning' },
+                        { text: '📚 Teaching with AI', value: 'interest:teaching' },
+                        { text: '⚖️ AI ethics & impact', value: 'interest:ethics' },
+                        { text: '🔧 Building AI systems', value: 'interest:building' },
+                        { text: '🤷 Show me everything', value: 'all activities' }
+                    ]
+                };
+            }
+
+            // Tinkery structure & formats
+            if (msg.includes('structure') || msg.includes('format')) {
+                return {
+                    messages: [
+                        "A Tinkery can take many forms. Here are the core activity formats:",
+                        "<strong>🎯 Tinker Time</strong> — Structured workshops for educators. Great for getting started.",
+                        "<strong>👥 Working Groups</strong> — Small cohorts meet 3+ times to dive deep into a theme (classroom practice, research workflows, creative coding, responsible AI).",
+                        "<strong>📋 Curiosity Boards</strong> — Interactive public displays for drop-in participation. Make AI literacy visible in hallways and shared spaces.",
+                        "<strong>🎴 Play & Tinker Cards</strong> — Printable card deck with bite-sized provocations for quick activities or discussion starters.",
+                        "<strong>Physical forms:</strong>",
+                        "• A hallway display",
+                        "• A class warm-up",
+                        "• A dedicated room",
+                        "• Drop-in sandbox space"
+                    ],
+                    quickReplies: [
+                        { text: '👥 Who runs a Tinkery?', value: 'tinkery roles' },
+                        { text: '🚀 How to launch', value: 'launch tinkery' },
+                        { text: '🎯 See activities', value: 'show activities' }
+                    ]
+                };
+            }
+
+            // Tinkery roles
+            if (msg.includes('roles') || msg.includes('people') || msg.includes('who runs')) {
+                return {
+                    messages: [
+                        "You don't need every role to start. Even one or two people can spark momentum.",
+                        "<strong>Key roles:</strong>",
+                        "🎪 <strong>Tinker Time Facilitator</strong> — Runs workshops where participants play and tinker with AI",
+                        "👥 <strong>Working Group Leader</strong> — Leads small cohorts (3+ meetings) to go deeper on a topic",
+                        "🧑‍🏫 <strong>Mentor 1:1</strong> — Models curiosity, provides coaching, pilots new practices",
+                        "🌐 <strong>Community Connector</strong> — Keeps momentum between sessions (Slack, newsletter, quick questions)",
+                        "⚙️ <strong>Manager</strong> — Coordinates activities, supports mentors, provides continuity",
+                        "🛠️ <strong>Builder</strong> — Sets up spaces with interactive displays and resources",
+                        "<strong>Mentorship model:</strong> We rely on part-time mentors (paid staff or volunteers, including students) who grow community capacity and spark creative applications."
+                    ],
+                    quickReplies: [
+                        { text: '📐 Tinkery formats', value: 'tinkery structure' },
+                        { text: '🚀 How to launch', value: 'launch tinkery' },
+                        { text: '🎯 See activities', value: 'show activities' }
                     ]
                 };
             }
