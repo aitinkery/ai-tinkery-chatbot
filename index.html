@@ -978,9 +978,9 @@
                         "• Critique AI"
                     ],
                     quickReplies: [
-                        { text: '🎯 Show me activities', value: 'show activities' },
-                        { text: '🌐 Join the community', value: 'community' },
-                        { text: '🚀 How to start?', value: 'how to start' }
+                        { text: '🎯 Explore activities', value: 'path:activities' },
+                        { text: '🏫 Launch a Tinkery', value: 'path:launch' },
+                        { text: '🌐 Join the community', value: 'community' }
                     ]
                 };
             }
@@ -995,8 +995,8 @@
                         "Share your experiments using <strong>#AITinkery</strong> and <strong>#StanfordAcceleratorforLearning</strong>"
                     ],
                     quickReplies: [
-                        { text: '🎯 Explore activities', value: 'show activities' },
-                        { text: '🏫 Launch a Tinkery', value: 'launch tinkery' }
+                        { text: '🎯 Explore activities', value: 'path:activities' },
+                        { text: '🏫 Launch a Tinkery', value: 'path:launch' }
                     ]
                 };
             }
@@ -1262,10 +1262,9 @@
                     addMessage("What would you like to do?");
                     setTimeout(() => {
                         addQuickReplies([
-                            { text: '🎯 Explore activities', value: 'show activities' },
-                            { text: '🏫 Launch a Tinkery', value: 'launch tinkery' },
-                            { text: '📚 About the Tinkery', value: 'tell me more' },
-                            { text: '👤 New user?', value: 'new user' }
+                            { text: '🎯 Explore activities', value: 'path:activities' },
+                            { text: '🏫 Launch a Tinkery', value: 'path:launch' },
+                            { text: '📚 About the Tinkery', value: 'tell me more' }
                         ]);
                     }, 800);
                 }, 1000);
