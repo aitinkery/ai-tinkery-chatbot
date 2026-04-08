@@ -76,20 +76,22 @@
         }
 
         .chat-header .logo {
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px;
+            padding: 3px;
             flex-shrink: 0;
+            overflow: hidden;
         }
 
-        .chat-header .logo svg {
+        .chat-header .logo img {
             width: 100%;
             height: 100%;
+            object-fit: cover;
         }
 
         .chat-messages {
