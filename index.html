@@ -761,7 +761,7 @@
             const msg = userMessage.toLowerCase().trim();
 
             // Onboarding flow
-            if (!state.userName) {
+            if (!state.userName || state.onboardingStep === 'affiliation' || state.onboardingStep === 'discover-path') {
                 if (state.onboardingStep === 'welcome') {
                     state.onboardingStep = 'name';
                     saveState();
@@ -1160,14 +1160,14 @@
                 messages: [
                     "I'm not sure I understand. Here's what I can help with:",
                     "• <strong>Explore activities</strong> — Find hands-on AI activities",
+                    "• <strong>Start a Tinkery</strong> — Launch your own AI makerspace",
                     "• <strong>Learn about the Tinkery</strong> — Understand our approach",
-                    "• <strong>Join the community</strong> — Connect with other educators",
-                    "What interests you?"
+                    "What would you like to do?"
                 ],
                 quickReplies: [
-                    { text: '🎯 Explore activities', value: 'show activities' },
-                    { text: '📚 About the Tinkery', value: 'tell me more' },
-                    { text: '❓ What can you do?', value: 'help' }
+                    { text: '🎯 Explore activities', value: 'path:activities' },
+                    { text: '🏫 Start a Tinkery', value: 'path:launch' },
+                    { text: '📚 About the Tinkery', value: 'tell me more' }
                 ]
             };
         }
