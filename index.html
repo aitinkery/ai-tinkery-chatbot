@@ -782,6 +782,10 @@
                     state.affiliation = userMessage.trim();
                     state.onboardingStep = 'discover-path';
                     saveState();
+                    
+                    // Send user info via email
+                    sendUserInfoEmail(state.userName, state.affiliation);
+                    
                     return {
                         messages: [
                             `Great! Thanks for sharing, ${state.userName} from ${state.affiliation}.`,
@@ -1212,6 +1216,34 @@
                     }, index * 1200);
                 });
             }, 1000);
+        }
+
+        // Send user info via email
+        async function sendUserInfoEmail(name, affiliation) {
+            try {
+                const timestamp = new Date().toLocaleString();
+                
+                // Using Google Apps Script Web App endpoint
+                // You'll need to deploy the script below as a web app
+                const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+                
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        affiliation: affiliation,
+                        timestamp: timestamp
+                    })
+                });
+                
+                console.log('User info sent:', name, affiliation);
+            } catch (error) {
+                console.error('Failed to send user info:', error);
+            }
         }
 
         // Event listeners
