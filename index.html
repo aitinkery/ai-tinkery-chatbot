@@ -891,7 +891,7 @@
             const msg = userMessage.toLowerCase().trim();
 
             // Onboarding flow
-            if (!state.userName) {
+            if (!state.userName || state.onboardingStep === 'affiliation' || state.onboardingStep === 'discover-path') {
                 if (state.onboardingStep === 'welcome') {
                     state.onboardingStep = 'name';
                     saveState();
