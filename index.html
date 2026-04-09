@@ -782,6 +782,10 @@
                     state.affiliation = userMessage.trim();
                     state.onboardingStep = 'discover-path';
                     saveState();
+                    
+                    // Send user info via email
+                    sendUserInfoEmail(state.userName, state.affiliation);
+                    
                     return {
                         messages: [
                             `Great! Thanks for sharing, ${state.userName} from ${state.affiliation}.`,
@@ -802,7 +806,8 @@
                         return {
                             messages: [
                                 "Awesome! Let's find activities that match your interests.",
-                                "What aspects of AI are you most curious about?"
+                                "What aspects of AI are you most curious about?",
+                                '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/interest-map.jpg" alt="Interest Discovery Map" style="width:100%;max-width:600px;border-radius:12px;margin:10px 0;">'
                             ],
                             quickReplies: [
                                 { text: '🎨 Creating things with AI', value: 'interest:creating' },
@@ -825,10 +830,7 @@
                                 "\"But tinkering is more important today than ever before. We live in a world that is characterized by uncertainty and rapid change. ...Tinkerers understand how to improvise, adapt, and iterate, so they are never stuck on old plans as new situations arise.\" (Resnick et al.)",
                                 "The AI Tinkery model is designed to be <strong>flexible and replicable</strong> — you can adapt it to your context.",
                                 "At its core, a Tinkery is built on <strong>four guiding principles:</strong>",
-                                "🤝 <strong>Collaborative</strong> — Learning through community dialogue. No one is an expert; everyone brings knowledge and has something to learn.",
-                                "❤️ <strong>Human-centered</strong> — Making space for questions, valuing multiple perspectives, and paying attention to technology's impact.",
-                                "🔧 <strong>Applied</strong> — Tinkering means trying, testing, remixing, and learning by doing to promote agency and curiosity.",
-                                "💭 <strong>Thoughtful</strong> — Approaching AI not as magic but as a system to be understood, questioned, and shaped.",
+                                '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/guiding-principles.jpg" alt="4 Guiding Principles" style="width:100%;max-width:600px;border-radius:12px;margin:10px 0;">',
                                 "What would you like to explore?"
                             ],
                             quickReplies: [
@@ -1047,16 +1049,8 @@
             if (msg.includes('structure') || msg.includes('format')) {
                 return {
                     messages: [
-                        "A Tinkery can take many forms. Here are the core activity formats:",
-                        "<strong>🎯 Tinker Time</strong> — Structured workshops for educators. Great for getting started.",
-                        "<strong>👥 Working Groups</strong> — Small cohorts meet 3+ times to dive deep into a theme (classroom practice, research workflows, creative coding, responsible AI).",
-                        "<strong>📋 Curiosity Boards</strong> — Interactive public displays for drop-in participation. Make AI literacy visible in hallways and shared spaces.",
-                        "<strong>🎴 Play & Tinker Cards</strong> — Printable card deck with bite-sized provocations for quick activities or discussion starters.",
-                        "<strong>Physical forms:</strong>",
-                        "• A hallway display",
-                        "• A class warm-up",
-                        "• A dedicated room",
-                        "• Drop-in sandbox space"
+                        "A Tinkery can take many forms:",
+                        '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/tinkery-formats.jpg" alt="Tinkery Formats" style="width:100%;max-width:700px;border-radius:12px;margin:10px 0;">'
                     ],
                     quickReplies: [
                         { text: '👥 Who runs a Tinkery?', value: 'tinkery roles' },
@@ -1215,6 +1209,34 @@
                     }, index * 1200);
                 });
             }, 1000);
+        }
+
+        // Send user info via email
+        async function sendUserInfoEmail(name, affiliation) {
+            try {
+                const timestamp = new Date().toLocaleString();
+                
+                // Using Google Apps Script Web App endpoint
+                // Replace YOUR_GOOGLE_APPS_SCRIPT_URL_HERE with deployed script URL
+                const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+                
+                const response = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        affiliation: affiliation,
+                        timestamp: timestamp
+                    })
+                });
+                
+                console.log('User info sent:', name, affiliation);
+            } catch (error) {
+                console.error('Failed to send user info:', error);
+            }
         }
 
         // Event listeners
