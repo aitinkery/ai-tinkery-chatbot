@@ -1278,8 +1278,47 @@
             return topActivities.map(s => s.activity);
         }
 
+        // Claude AI Integration
+        const CLAUDE_BACKEND_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+        
+        async function askClaude(userMessage) {
+            const history = state.conversationHistory || [];
+            
+            try {
+                const response = await fetch(CLAUDE_BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        history: history.slice(-10)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (!state.conversationHistory) {
+                        state.conversationHistory = [];
+                    }
+                    state.conversationHistory.push(
+                        { role: 'user', content: userMessage },
+                        { role: 'assistant', content: data.response }
+                    );
+                    saveState();
+                    
+                    return data.response;
+                } else {
+                    console.error('Claude error:', data.error);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Failed to reach Claude:', error);
+                return null;
+            }
+        }
+
         // Bot responses
-        function botRespond(userMessage) {
+        async function botRespond(userMessage) {
             const msg = userMessage.toLowerCase().trim();
 
             // Onboarding flow
@@ -1677,10 +1716,22 @@
                 return generateSmartResponse(intent, userMessage);
             }
 
-            // Default fallback response
+            // Try Claude AI before fallback
+            const claudeResponse = await askClaude(userMessage);
+            if (claudeResponse) {
+                return {
+                    messages: [claudeResponse],
+                    quickReplies: [
+                        { text: '🎯 Show activities', value: 'show activities' },
+                        { text: '📚 About the Tinkery', value: 'tell me more' }
+                    ]
+                };
+            }
+
+            // Default fallback response (if Claude fails)
             return {
                 messages: [
-                    "I'm not sure I understand. Here's what I can help with:",
+                    "I'm having trouble connecting right now. Here's what I can help with:",
                     "• <strong>Explore activities</strong> — Find hands-on AI activities",
                     "• <strong>Learn about the Tinkery</strong> — Understand our approach",
                     "• <strong>Join the community</strong> — Connect with other educators",
@@ -1706,9 +1757,9 @@
             showTyping();
 
             // Get bot response
-            setTimeout(() => {
+            setTimeout(async () => {
                 hideTyping();
-                const response = botRespond(message);
+                const response = await botRespond(message);
                 
                 response.messages.forEach((msg, index) => {
                     setTimeout(() => {
