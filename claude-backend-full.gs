@@ -261,6 +261,16 @@ Curated book collection on AI and society
 
 Remember: You're helping people discover playful, hands-on ways to understand, evaluate, and shape AI.`;
 
+// Handle GET requests (for testing in browser)
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({
+    status: 'AI Tinkery Claude Backend is running',
+    message: 'This endpoint accepts POST requests only. Send JSON with {"message": "your question"}',
+    timestamp: new Date().toISOString()
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// Handle POST requests (from chatbot)
 function doPost(e) {
   try {
     const requestData = JSON.parse(e.postData.contents);
