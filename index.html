@@ -1603,6 +1603,53 @@
                 }
             }
 
+            // Restart
+            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
+                return {
+                    messages: [
+                        "Starting fresh! I'll clear the conversation and you can begin again."
+                    ],
+                    quickReplies: [
+                        { text: '✅ Yes, start over', value: 'confirm-reset' },
+                        { text: '❌ Cancel', value: 'help' }
+                    ]
+                };
+            }
+
+            // Confirm reset
+            if (msg.includes('confirm-reset')) {
+                localStorage.removeItem('aiTinkeryState');
+                location.reload();
+                return { messages: [], quickReplies: null };
+            }
+
+            // Show activity cards (UI action — kept before Claude)
+            if (msg.includes('all activities') || msg.includes('see all')) {
+                const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 5);
+                return {
+                    messages: [
+                        "Here are some activities you might enjoy:",
+                        ...randomActivities.map(createActivityCard),
+                        "Tap any activity to learn more! Or tell me what interests you and I can recommend something specific."
+                    ],
+                    quickReplies: null
+                };
+            }
+
+            // Try Claude AI for intelligent responses
+            const claudeResponse = await askClaude(userMessage);
+            if (claudeResponse) {
+                // Generate context-aware quick replies
+                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
+                
+                return {
+                    messages: [claudeResponse],
+                    quickReplies: quickReplies
+                };
+            }
+
+            // ── Fallbacks (only used if Claude fails) ──────────────────────────
+
             // Help / what can I do
             if (msg.includes('help') || msg.includes('what can') || msg.includes('how do')) {
                 return {
@@ -1664,7 +1711,7 @@
             }
 
             // How to launch a Tinkery
-            if (msg.includes('launch') || msg.includes('start') || msg.includes('create tinkery')) {
+            if (msg.includes('launch tinkery') || msg.includes('create tinkery')) {
                 return {
                     messages: [
                         "Starting your own Tinkery is flexible! Here's how:",
@@ -1686,7 +1733,7 @@
             }
 
             // Change interest / discover interests
-            if (msg.includes('change interest') || (msg.includes('show') && msg.includes('activities')) || msg.includes('explore') || msg.includes('browse')) {
+            if (msg.includes('change interest') || (msg.includes('show') && msg.includes('activities')) || msg.includes('browse')) {
                 return {
                     messages: [
                         "What aspects of AI are you most curious about?"
@@ -1703,7 +1750,7 @@
             }
 
             // Tinkery structure & formats
-            if (msg.includes('structure') || msg.includes('format')) {
+            if (msg.includes('tinkery structure') || msg.includes('tinkery format')) {
                 return {
                     messages: [
                         "A Tinkery can take many forms:",
@@ -1718,7 +1765,7 @@
             }
 
             // Tinkery roles
-            if (msg.includes('roles') || msg.includes('people') || msg.includes('who runs')) {
+            if (msg.includes('tinkery roles') || msg.includes('who runs')) {
                 return {
                     messages: [
                         "You don't need every role to start. Even one or two people can spark momentum.",
@@ -1736,51 +1783,6 @@
                         { text: '🚀 How to launch', value: 'launch tinkery' },
                         { text: '🎯 See activities', value: 'show activities' }
                     ]
-                };
-            }
-
-            // All activities - show random selection
-            if (msg.includes('all activities') || msg.includes('everything') || msg.includes('see all')) {
-                const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 5);
-                return {
-                    messages: [
-                        "Here are some activities you might enjoy:",
-                        ...randomActivities.map(createActivityCard),
-                        "Tap any activity to learn more! Or tell me what interests you and I can recommend something specific."
-                    ],
-                    quickReplies: null
-                };
-            }
-
-            // Restart
-            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
-                return {
-                    messages: [
-                        "Starting fresh! I'll clear the conversation and you can begin again."
-                    ],
-                    quickReplies: [
-                        { text: '✅ Yes, start over', value: 'confirm-reset' },
-                        { text: '❌ Cancel', value: 'help' }
-                    ]
-                };
-            }
-
-            // Confirm reset
-            if (msg.includes('confirm-reset')) {
-                localStorage.removeItem('aiTinkeryState');
-                location.reload();
-                return { messages: [], quickReplies: null };
-            }
-
-            // Try Claude AI for intelligent responses
-            const claudeResponse = await askClaude(userMessage);
-            if (claudeResponse) {
-                // Generate context-aware quick replies
-                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
-                
-                return {
-                    messages: [claudeResponse],
-                    quickReplies: quickReplies
                 };
             }
 
