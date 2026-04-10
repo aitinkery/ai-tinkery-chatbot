@@ -166,6 +166,31 @@
             border-bottom-left-radius: 4px;
         }
 
+        .message-content p {
+            margin: 0 0 12px 0;
+            line-height: 1.6;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content ul,
+        .message-content ol {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin: 4px 0;
+            line-height: 1.5;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+            color: #E8620A;
+        }
+
         .message.user .message-content {
             background: #E8620A;
             color: white;
@@ -812,6 +837,22 @@
         loadState();
 
         // Add message to chat
+        // Format Claude's markdown responses
+        function formatMarkdown(text) {
+            return text
+                // Bold
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                // Bullet lists
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                // Numbered lists
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
+                // Line breaks
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br/>');
+        }
+
         function addMessage(content, isUser = false, includeAvatar = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
@@ -831,7 +872,9 @@
             contentDiv.className = 'message-content';
             
             if (typeof content === 'string') {
-                contentDiv.innerHTML = content;
+                // Format markdown if it's a bot message
+                const formatted = isUser ? content : `<p>${formatMarkdown(content)}</p>`;
+                contentDiv.innerHTML = formatted;
             } else {
                 contentDiv.appendChild(content);
             }
