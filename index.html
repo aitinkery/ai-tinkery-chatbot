@@ -1284,13 +1284,35 @@
         async function askClaude(userMessage) {
             const history = state.conversationHistory || [];
             
+            // Search activities to provide context to Claude
+            const msg = userMessage.toLowerCase();
+            const keywords = msg.split(/\s+/).filter(w => w.length > 3);
+            
+            // Find relevant activities
+            const relevantActivities = ACTIVITIES.map(activity => {
+                const searchText = `${activity.name} ${activity.description} ${activity.category}`.toLowerCase();
+                const matchCount = keywords.filter(keyword => searchText.includes(keyword)).length;
+                return { activity, score: matchCount };
+            })
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5)
+            .map(item => ({
+                name: item.activity.name,
+                time: item.activity.time,
+                type: item.activity.type,
+                description: item.activity.description,
+                category: item.activity.category
+            }));
+            
             try {
                 const response = await fetch(CLAUDE_BACKEND_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         message: userMessage,
-                        history: history.slice(-10)
+                        history: history.slice(-10),
+                        activities: relevantActivities
                     })
                 });
                 
