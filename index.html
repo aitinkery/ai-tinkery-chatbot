@@ -1804,15 +1804,7 @@
                 return { messages: [], quickReplies: null };
             }
 
-            // INTELLIGENT NATURAL LANGUAGE UNDERSTANDING
-            // Parse intent from user message
-            const intent = detectIntent(userMessage);
-            
-            if (intent) {
-                return generateSmartResponse(intent, userMessage);
-            }
-
-            // Try Claude AI before fallback
+            // Try Claude AI first for intelligent responses
             const claudeResponse = await askClaude(userMessage);
             if (claudeResponse) {
                 // Generate context-aware quick replies
@@ -1822,6 +1814,14 @@
                     messages: [claudeResponse],
                     quickReplies: quickReplies
                 };
+            }
+
+            // INTELLIGENT NATURAL LANGUAGE UNDERSTANDING (fallback if Claude fails)
+            // Parse intent from user message
+            const intent = detectIntent(userMessage);
+            
+            if (intent) {
+                return generateSmartResponse(intent, userMessage);
             }
 
             // Default fallback response (if Claude fails)
