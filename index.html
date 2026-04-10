@@ -1339,6 +1339,61 @@
             }
         }
 
+        // Smart Quick Reply Generator
+        function generateSmartQuickReplies(userMessage, claudeResponse) {
+            const msg = userMessage.toLowerCase();
+            const response = claudeResponse.toLowerCase();
+            
+            // Base options that always make sense
+            const baseReplies = [];
+            
+            // Context-aware suggestions
+            if (response.includes('activity') || response.includes('recommend')) {
+                // Claude mentioned activities
+                baseReplies.push(
+                    { text: '🎯 Show all activities', value: 'show activities' },
+                    { text: '🔍 Filter by interest', value: 'interest:explore' }
+                );
+            } else if (response.includes('tinkery') || response.includes('launch') || response.includes('start')) {
+                // About launching a Tinkery
+                baseReplies.push(
+                    { text: '🏠 How to launch', value: 'launch tinkery' },
+                    { text: '👥 Roles needed', value: 'tinkery roles' }
+                );
+            } else if (response.includes('principle') || response.includes('philosophy') || response.includes('approach')) {
+                // About Tinkery values
+                baseReplies.push(
+                    { text: '📚 About the Tinkery', value: 'tell me more' },
+                    { text: '🎯 See activities', value: 'show activities' }
+                );
+            } else if (response.includes('bias') || response.includes('ethic') || response.includes('critical')) {
+                // Ethics/critical topics
+                baseReplies.push(
+                    { text: '⚖️ More on AI ethics', value: 'interest:ethics' },
+                    { text: '🔍 Explore activities', value: 'show activities' }
+                );
+            } else if (response.includes('beginner') || response.includes('start') || response.includes('first')) {
+                // Beginner-focused
+                baseReplies.push(
+                    { text: '🌱 Beginner activities', value: 'show activities' },
+                    { text: '💡 Learn the basics', value: 'tell me more' }
+                );
+            } else {
+                // Default options
+                baseReplies.push(
+                    { text: '🎯 Browse activities', value: 'show activities' },
+                    { text: '📚 About the Tinkery', value: 'tell me more' }
+                );
+            }
+            
+            // Always add "Ask another question" option
+            baseReplies.push(
+                { text: '❓ Ask another question', value: 'help' }
+            );
+            
+            return baseReplies.slice(0, 3); // Max 3 quick replies for clean UI
+        }
+
         // Bot responses
         async function botRespond(userMessage) {
             const msg = userMessage.toLowerCase().trim();
@@ -1741,12 +1796,12 @@
             // Try Claude AI before fallback
             const claudeResponse = await askClaude(userMessage);
             if (claudeResponse) {
+                // Generate context-aware quick replies
+                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
+                
                 return {
                     messages: [claudeResponse],
-                    quickReplies: [
-                        { text: '🎯 Show activities', value: 'show activities' },
-                        { text: '📚 About the Tinkery', value: 'tell me more' }
-                    ]
+                    quickReplies: quickReplies
                 };
             }
 
