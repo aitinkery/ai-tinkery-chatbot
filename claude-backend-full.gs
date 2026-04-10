@@ -3,7 +3,7 @@
 // Trained on: Website, Playbook (18 pages), Full Activity Catalog
 
 const CLAUDE_API_KEY = 'YOUR_CLAUDE_API_KEY_HERE';
-const CLAUDE_MODEL = 'claude-3-5-sonnet-20241022';
+const CLAUDE_MODEL = 'claude-3-5-sonnet-20240620';
 
 // COMPREHENSIVE SYSTEM CONTEXT - Full AI Tinkery Knowledge
 const SYSTEM_CONTEXT = `You are an AI assistant for the Stanford AI Tinkery, deeply knowledgeable about its mission, activities, and educational approach.
