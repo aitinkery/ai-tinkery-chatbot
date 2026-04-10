@@ -1606,241 +1606,75 @@
             // Restart
             if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
                 return {
-                    messages: [
-                        "Starting fresh! I'll clear the conversation and you can begin again."
-                    ],
+                    messages: ["Starting fresh! I'll clear the conversation and you can begin again."],
                     quickReplies: [
                         { text: '✅ Yes, start over', value: 'confirm-reset' },
-                        { text: '❌ Cancel', value: 'help' }
+                        { text: '❌ Cancel', value: 'cancel' }
                     ]
                 };
             }
 
-            // Confirm reset
             if (msg.includes('confirm-reset')) {
                 localStorage.removeItem('aiTinkeryState');
                 location.reload();
                 return { messages: [], quickReplies: null };
             }
 
-            // Show activity cards (UI action — kept before Claude)
-            if (msg.includes('all activities') || msg.includes('see all')) {
-                const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 5);
-                return {
-                    messages: [
-                        "Here are some activities you might enjoy:",
-                        ...randomActivities.map(createActivityCard),
-                        "Tap any activity to learn more! Or tell me what interests you and I can recommend something specific."
-                    ],
-                    quickReplies: null
-                };
-            }
-
-            // Try Claude AI for intelligent responses
+            // Claude handles everything — activity cards are appended automatically
             const claudeResponse = await askClaude(userMessage);
             if (claudeResponse) {
-                // Generate context-aware quick replies
+                const activityCards = extractMatchedActivities(claudeResponse, userMessage);
                 const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
-                
                 return {
-                    messages: [claudeResponse],
-                    quickReplies: quickReplies
+                    messages: [claudeResponse, ...activityCards.map(createActivityCard)],
+                    quickReplies
                 };
             }
 
-            // ── Fallbacks (only used if Claude fails) ──────────────────────────
-
-            // Help / what can I do
-            if (msg.includes('help') || msg.includes('what can') || msg.includes('how do')) {
-                return {
-                    messages: [
-                        "I can help you with:",
-                        "• Discover hands-on AI activities based on your interests",
-                        "• Learn about what the AI Tinkery is and how it works",
-                        "• Get guidance on specific activities from our collection",
-                        "• Connect you with resources and the Tinkery community"
-                    ],
-                    quickReplies: [
-                        { text: '🎯 Explore activities', value: 'show activities' },
-                        { text: '📚 About the Tinkery', value: 'tell me more' }
-                    ]
-                };
-            }
-
-            // About the Tinkery
-            if (msg.includes('tell me more') || msg.includes('what is') || msg.includes('about')) {
-                return {
-                    messages: [
-                        "The <strong>AI Tinkery</strong> is a place to play and tinker with AI — to better understand, use, and shape it.",
-                        "We believe learning happens through <strong>doing</strong>. No experience required!",
-                        "Our approach is built on four principles:",
-                        "🤝 <strong>Collaborative</strong> — Learning through community dialogue",
-                        "❤️ <strong>Human-centered</strong> — Valuing multiple perspectives",
-                        "🔧 <strong>Applied</strong> — Trying, testing, and learning by doing",
-                        "💭 <strong>Thoughtful</strong> — Understanding AI as a system to be questioned and shaped",
-                        "We have <strong>26 hands-on activities</strong> across six categories:",
-                        "• Learn About AI",
-                        "• Use AI",
-                        "• Create With AI",
-                        "• Learn/Teach With AI",
-                        "• Shape AI",
-                        "• Thoughtful AI"
-                    ],
-                    quickReplies: [
-                        { text: '🎯 Explore activities', value: 'path:activities' },
-                        { text: '🏫 Launch a Tinkery', value: 'path:launch' },
-                        { text: '🌐 Join the community', value: 'community' }
-                    ]
-                };
-            }
-
-            // Community / Satellite Network
-            if (msg.includes('community') || msg.includes('network') || msg.includes('connect')) {
-                return {
-                    messages: [
-                        "The <strong>AI Tinkery Satellite Network</strong> is a growing community of educators and schools experimenting with AI together.",
-                        "Satellites connect through <strong>quarterly meetups</strong> to share what works, reflect on challenges, and imagine what comes next.",
-                        "You can join by visiting <a href='https://ai-tinkery.stanford.edu' target='_blank' class='link'>ai-tinkery.stanford.edu</a> and signing up!",
-                        "Share your experiments using <strong>#AITinkery</strong> and <strong>#StanfordAcceleratorforLearning</strong>"
-                    ],
-                    quickReplies: [
-                        { text: '🎯 Explore activities', value: 'path:activities' },
-                        { text: '🏫 Launch a Tinkery', value: 'path:launch' }
-                    ]
-                };
-            }
-
-            // How to launch a Tinkery
-            if (msg.includes('launch tinkery') || msg.includes('create tinkery')) {
-                return {
-                    messages: [
-                        "Starting your own Tinkery is flexible! Here's how:",
-                        "<strong>1. Create a space, try some activities</strong><br>Pick one activity and set it up in your classroom or hallway. Let learners engage!",
-                        "<strong>2. Share with others</strong><br>Document what you tried and share online using #AITinkery",
-                        "<strong>3. Join the Satellite Network</strong><br>Connect with other educators at quarterly community meetups",
-                        "A Tinkery can be:",
-                        "• A hallway display (Curiosity Board)",
-                        "• A class warm-up activity",
-                        "• A dedicated room or makerspace",
-                        "• Drop-in workshop sessions",
-                        "Start small and grow from there!"
-                    ],
-                    quickReplies: [
-                        { text: '🎯 See activities', value: 'show activities' },
-                        { text: '🌐 Join the network', value: 'community' }
-                    ]
-                };
-            }
-
-            // Change interest / discover interests
-            if (msg.includes('change interest') || (msg.includes('show') && msg.includes('activities')) || msg.includes('browse')) {
-                return {
-                    messages: [
-                        "What aspects of AI are you most curious about?"
-                    ],
-                    quickReplies: [
-                        { text: '🎨 Creating things with AI', value: 'interest:creating' },
-                        { text: '🧠 Understanding how AI works', value: 'interest:learning' },
-                        { text: '📚 Teaching with AI', value: 'interest:teaching' },
-                        { text: '⚖️ AI ethics & impact', value: 'interest:ethics' },
-                        { text: '🔧 Building AI systems', value: 'interest:building' },
-                        { text: '🤷 Show me everything', value: 'all activities' }
-                    ]
-                };
-            }
-
-            // Tinkery structure & formats
-            if (msg.includes('tinkery structure') || msg.includes('tinkery format')) {
-                return {
-                    messages: [
-                        "A Tinkery can take many forms:",
-                        '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/tinkery-formats.jpg" alt="Tinkery Formats" style="width:100%;max-width:700px;border-radius:12px;margin:10px 0;">'
-                    ],
-                    quickReplies: [
-                        { text: '👥 Who runs a Tinkery?', value: 'tinkery roles' },
-                        { text: '🚀 How to launch', value: 'launch tinkery' },
-                        { text: '🎯 See activities', value: 'show activities' }
-                    ]
-                };
-            }
-
-            // Tinkery roles
-            if (msg.includes('tinkery roles') || msg.includes('who runs')) {
-                return {
-                    messages: [
-                        "You don't need every role to start. Even one or two people can spark momentum.",
-                        "<strong>Key roles:</strong>",
-                        "🎪 <strong>Tinker Time Facilitator</strong> — Runs workshops where participants play and tinker with AI",
-                        "👥 <strong>Working Group Leader</strong> — Leads small cohorts (3+ meetings) to go deeper on a topic",
-                        "🧑‍🏫 <strong>Mentor 1:1</strong> — Models curiosity, provides coaching, pilots new practices",
-                        "🌐 <strong>Community Connector</strong> — Keeps momentum between sessions (Slack, newsletter, quick questions)",
-                        "⚙️ <strong>Manager</strong> — Coordinates activities, supports mentors, provides continuity",
-                        "🛠️ <strong>Builder</strong> — Sets up spaces with interactive displays and resources",
-                        "<strong>Mentorship model:</strong> We rely on part-time mentors (paid staff or volunteers, including students) who grow community capacity and spark creative applications."
-                    ],
-                    quickReplies: [
-                        { text: '📐 Tinkery formats', value: 'tinkery structure' },
-                        { text: '🚀 How to launch', value: 'launch tinkery' },
-                        { text: '🎯 See activities', value: 'show activities' }
-                    ]
-                };
-            }
-
-            // Recommend based on interests (fallback if Claude fails)
-            if (msg.length > 10 && !msg.includes('show') && !msg.includes('tell')) {
-                state.interests.push(userMessage);
-                saveState();
-                
-                const recommended = recommendActivities(userMessage);
-                
-                if (recommended.length > 0) {
-                    return {
-                        messages: [
-                            `Based on your interest in "${userMessage}", here are some activities I think you'll like:`,
-                            ...recommended.map(createActivityCard),
-                            "Tap any activity to get started!"
-                        ],
-                        quickReplies: [
-                            { text: '🔍 Search again', value: 'show activities' },
-                            { text: '📚 About the Tinkery', value: 'tell me more' }
-                        ]
-                    };
-                } else {
-                    return {
-                        messages: [
-                            "I couldn't find a perfect match, but here are some popular activities:",
-                            ...ACTIVITIES.slice(0, 3).map(createActivityCard)
-                        ],
-                        quickReplies: [
-                            { text: '🔍 Try another search', value: 'show activities' }
-                        ]
-                    };
-                }
-            }
-
-            // INTELLIGENT NATURAL LANGUAGE UNDERSTANDING (fallback if Claude fails)
-            // Parse intent from user message
-            const intent = detectIntent(userMessage);
-            
-            if (intent) {
-                return generateSmartResponse(intent, userMessage);
-            }
-
-            // Default fallback response (if Claude fails)
+            // Fallback if Claude is unreachable
             return {
                 messages: [
-                    "I'm having trouble connecting right now. Here's what I can help with:",
-                    "• <strong>Explore activities</strong> — Find hands-on AI activities",
-                    "• <strong>Learn about the Tinkery</strong> — Understand our approach",
-                    "• <strong>Join the community</strong> — Connect with other educators",
-                    "What interests you?"
+                    "I'm having trouble connecting right now. Try asking me about AI activities, the Tinkery, or how to get started."
                 ],
                 quickReplies: [
-                    { text: '🎯 Explore activities', value: 'show activities' },
-                    { text: '📚 About the Tinkery', value: 'tell me more' },
-                    { text: '❓ What can you do?', value: 'help' }
+                    { text: '🎯 Explore activities', value: 'show me some activities' },
+                    { text: '📚 About the Tinkery', value: 'what is the AI Tinkery?' },
+                    { text: '❓ Help', value: 'what can you help with?' }
                 ]
             };
+        }
+
+        // Scan Claude's response and user message to find relevant activity cards to display
+        function extractMatchedActivities(claudeResponse, userMessage) {
+            const responseText = claudeResponse.toLowerCase();
+            const userText = userMessage.toLowerCase();
+
+            // 1. Exact activity name mentions in Claude's response
+            const byName = ACTIVITIES.filter(a =>
+                responseText.includes(a.name.toLowerCase())
+            );
+            if (byName.length > 0) {
+                return byName.slice(0, 5);
+            }
+
+            // 2. Keyword-based matching, but only when the conversation is about activities
+            const activityRelated =
+                responseText.includes('activit') ||
+                responseText.includes('recommend') ||
+                responseText.includes('suggest') ||
+                responseText.includes('try this') ||
+                responseText.includes('check out') ||
+                userText.includes('activit') ||
+                userText.includes('recommend') ||
+                userText.includes('suggest') ||
+                userText.includes('what should i') ||
+                userText.includes('what can i');
+
+            if (activityRelated) {
+                return recommendActivities(userMessage).slice(0, 5);
+            }
+
+            return [];
         }
 
         // Handle user message
