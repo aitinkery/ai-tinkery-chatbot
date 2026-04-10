@@ -1279,7 +1279,7 @@
         }
 
         // Claude AI Integration
-        const CLAUDE_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyy3H8GPrRDIfmnQT3LrVkOuGCpo1iwYq8cGBM8TI6LT9TPILTaPHNPQv9RT9Q_5rgw/exec';
+        const CLAUDE_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbygP5mGHqEprhWDEVhEYahonPnPhZLSpwLoGo5n39-RttowqSp_qKAs1MEYERrZ0kaz/exec';
         
         async function askClaude(userMessage) {
             const history = state.conversationHistory || [];
@@ -1308,12 +1308,15 @@
             try {
                 const response = await fetch(CLAUDE_BACKEND_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
                     body: JSON.stringify({
                         message: userMessage,
                         history: history.slice(-10),
                         activities: relevantActivities
-                    })
+                    }),
+                    redirect: 'follow'
                 });
                 
                 const data = await response.json();
