@@ -1279,7 +1279,7 @@
         }
 
         // Claude AI Integration
-        const CLAUDE_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbygP5mGHqEprhWDEVhEYahonPnPhZLSpwLoGo5n39-RttowqSp_qKAs1MEYERrZ0kaz/exec';
+        const CLAUDE_BACKEND_URL = '/api/claude';
         
         async function askClaude(userMessage) {
             const history = state.conversationHistory || [];
@@ -1752,7 +1752,39 @@
                 };
             }
 
-            // Recommend based on interests
+            // Restart
+            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
+                return {
+                    messages: [
+                        "Starting fresh! I'll clear the conversation and you can begin again."
+                    ],
+                    quickReplies: [
+                        { text: '✅ Yes, start over', value: 'confirm-reset' },
+                        { text: '❌ Cancel', value: 'help' }
+                    ]
+                };
+            }
+
+            // Confirm reset
+            if (msg.includes('confirm-reset')) {
+                localStorage.removeItem('aiTinkeryState');
+                location.reload();
+                return { messages: [], quickReplies: null };
+            }
+
+            // Try Claude AI for intelligent responses
+            const claudeResponse = await askClaude(userMessage);
+            if (claudeResponse) {
+                // Generate context-aware quick replies
+                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
+                
+                return {
+                    messages: [claudeResponse],
+                    quickReplies: quickReplies
+                };
+            }
+
+            // Recommend based on interests (fallback if Claude fails)
             if (msg.length > 10 && !msg.includes('show') && !msg.includes('tell')) {
                 state.interests.push(userMessage);
                 saveState();
@@ -1782,38 +1814,6 @@
                         ]
                     };
                 }
-            }
-
-            // Restart
-            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
-                return {
-                    messages: [
-                        "Starting fresh! I'll clear the conversation and you can begin again."
-                    ],
-                    quickReplies: [
-                        { text: '✅ Yes, start over', value: 'confirm-reset' },
-                        { text: '❌ Cancel', value: 'help' }
-                    ]
-                };
-            }
-
-            // Confirm reset
-            if (msg.includes('confirm-reset')) {
-                localStorage.removeItem('aiTinkeryState');
-                location.reload();
-                return { messages: [], quickReplies: null };
-            }
-
-            // Try Claude AI first for intelligent responses
-            const claudeResponse = await askClaude(userMessage);
-            if (claudeResponse) {
-                // Generate context-aware quick replies
-                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
-                
-                return {
-                    messages: [claudeResponse],
-                    quickReplies: quickReplies
-                };
             }
 
             // INTELLIGENT NATURAL LANGUAGE UNDERSTANDING (fallback if Claude fails)
