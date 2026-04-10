@@ -22,7 +22,7 @@ The chatbot now uses Claude AI (Anthropic) for intelligent, contextual responses
 2. Click **New Project**
 3. Name it: "AI Tinkery Claude Backend"
 4. Delete the default code
-5. Copy the code from `claude-backend.gs` in this repo
+5. Copy the code from `claude-backend-full.gs` in this repo (this includes ALL Tinkery knowledge)
 6. **Replace** `YOUR_CLAUDE_API_KEY_HERE` with your actual API key
 7. Click **Deploy** > **New deployment**
    - Type: **Web app**
