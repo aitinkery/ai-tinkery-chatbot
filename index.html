@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Source Sans 3', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
             color: #fff;
             height: 100vh;
             display: flex;
@@ -36,7 +36,7 @@
         }
 
         .chat-header {
-            background: #E8620A;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
             color: white;
             padding: 20px;
             text-align: center;
@@ -72,20 +72,35 @@
 
         .reset-btn:hover {
             background: white;
-            color: #E8620A;
+            color: #B83A4B;
         }
 
         .chat-header .logo {
-            width: 35px;
-            height: 35px;
-            background: white;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
+            overflow: hidden;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 3px;
-            flex-shrink: 0;
-            overflow: hidden;
+        }
+
+        .chat-header .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .chat-header .stanford-logo {
+            height: 50px;
+            max-width: 300px;
+        }
+
+        .chat-header .stanford-logo img {
+            height: 100%;
+            width: auto;
+            object-fit: contain;
         }
 
         .chat-header .logo img {
@@ -134,7 +149,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #E8620A;
+            background: #B83A4B;
             color: white;
             display: flex;
             align-items: center;
@@ -188,11 +203,11 @@
 
         .message-content strong {
             font-weight: 600;
-            color: #E8620A;
+            color: #B83A4B;
         }
 
         .message.user .message-content {
-            background: #E8620A;
+            background: #B83A4B;
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -207,8 +222,8 @@
 
         .quick-reply-btn {
             background: white;
-            border: 2px solid #E8620A;
-            color: #E8620A;
+            border: 2px solid #B83A4B;
+            color: #B83A4B;
             padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
@@ -218,12 +233,12 @@
         }
 
         .quick-reply-btn:hover {
-            background: #E8620A;
+            background: #B83A4B;
             color: white;
         }
 
         .activity-card {
-            background: linear-gradient(135deg, #E8620A 0%, #c7520a 100%);
+            background: linear-gradient(135deg, #B83A4B 0%, #c7520a 100%);
             color: white;
             padding: 10px;
             border-radius: 8px;
@@ -277,11 +292,11 @@
         }
 
         .chat-input:focus {
-            border-color: #E8620A;
+            border-color: #B83A4B;
         }
 
         .send-btn {
-            background: #E8620A;
+            background: #B83A4B;
             color: white;
             border: none;
             width: 50px;
@@ -316,7 +331,7 @@
         .typing-dot {
             width: 8px;
             height: 8px;
-            background: #E8620A;
+            background: #B83A4B;
             border-radius: 50%;
             animation: typing 1.4s infinite;
         }
@@ -339,7 +354,7 @@
         }
 
         .link {
-            color: #E8620A;
+            color: #B83A4B;
             text-decoration: underline;
             cursor: pointer;
         }
