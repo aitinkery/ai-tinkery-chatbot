@@ -1834,33 +1834,50 @@
                 hideTyping();
                 const response = await botRespond(message);
                 
-                response.messages.forEach((msg, index) => {
+                let totalDelay = 0;
+                const hasQuickReplies = response.quickReplies;
+                const allMessages = [];
+                
+                // Process messages into chunks
+                response.messages.forEach((msg) => {
+                    if (typeof msg === 'string') {
+                        const chunks = splitIntoChunks(msg);
+                        chunks.forEach(chunk => {
+                            allMessages.push({type: 'text', content: chunk});
+                        });
+                    } else {
+                        allMessages.push({type: 'card', content: msg});
+                    }
+                });
+                
+                // Display messages with delays
+                allMessages.forEach((item, index) => {
                     setTimeout(() => {
-                        if (typeof msg === 'string') {
+                        if (item.type === 'text') {
                             showTyping();
                             setTimeout(() => {
                                 hideTyping();
-                                addMessage(msg);
-                                
-                                // Add quick replies after last message
-                                if (index === response.messages.length - 1 && response.quickReplies) {
-                                    setTimeout(() => {
-                                        addQuickReplies(response.quickReplies);
-                                    }, 500);
-                                }
+                                addMessage(item.content);
                             }, 800);
                         } else {
-                            // It's an element (activity card)
-                            addMessage(msg);
-                            
-                            // Add quick replies after last message
-                            if (index === response.messages.length - 1 && response.quickReplies) {
-                                setTimeout(() => {
-                                    addQuickReplies(response.quickReplies);
-                                }, 500);
-                            }
+                            addMessage(item.content);
                         }
-                    }, index * 1200);
+                        
+                        // Add quick replies after last message
+                        if (index === allMessages.length - 1 && hasQuickReplies) {
+                            setTimeout(() => {
+                                addQuickReplies(response.quickReplies);
+                            }, 1000);
+                        }
+                    }, totalDelay);
+                    
+                    // Calculate next delay (minimum 5 seconds)
+                    if (item.type === 'text') {
+                        totalDelay += 800 + getReadingDelay(item.content);
+                    } else {
+                        totalDelay += 500;
+                    }
+                });
                 });
             }, 1000);
         }
