@@ -896,8 +896,8 @@
 
         // Calculate reading delay
         function getReadingDelay(text) {
-            const minDelay = 5000; // 5 seconds minimum
-            const maxDelay = 8000; // 8 seconds maximum
+            const minDelay = 3000; // 3 seconds minimum
+            const maxDelay = 5000; // 5 seconds maximum
             const words = text.split(/\s+/).length;
             const delay = words * 250; // 250ms per word
             return Math.min(Math.max(delay, minDelay), maxDelay);
@@ -1409,11 +1409,11 @@
 
             scored.sort((a, b) => b.score - a.score);
             
-            const topActivities = scored.slice(0, 3).filter(s => s.score > 0);
+            const topActivities = scored.slice(0, 2).filter(s => s.score > 0);
             
             if (topActivities.length === 0) {
                 // Random selection if no matches
-                return ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 3);
+                return ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 2);
             }
             
             return topActivities.map(s => s.activity);
@@ -1877,6 +1877,7 @@
                     } else {
                         totalDelay += 500;
                     }
+                });
                 });
             }, 1000);
         }
