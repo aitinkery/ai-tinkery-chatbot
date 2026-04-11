@@ -837,6 +837,54 @@
         loadState();
 
         // Add message to chat
+        // Split text into readable chunks
+        function splitIntoChunks(text) {
+            const chunks = [];
+            const sections = text.split(/\n\n+/);
+            
+            sections.forEach(section => {
+                section = section.trim();
+                if (!section) return;
+                
+                // Check if it's a list
+                const listItems = section.match(/^[-\d+\.].+$/gm);
+                if (listItems && listItems.length > 1) {
+                    // Group list items in chunks of 3
+                    for (let i = 0; i < listItems.length; i += 3) {
+                        chunks.push(listItems.slice(i, i + 3).join('\n'));
+                    }
+                } else {
+                    // Split long paragraphs
+                    if (section.length > 200) {
+                        const sentences = section.match(/[^.!?]+[.!?]+/g) || [section];
+                        let currentChunk = '';
+                        sentences.forEach(sentence => {
+                            if ((currentChunk + sentence).length > 200 && currentChunk) {
+                                chunks.push(currentChunk.trim());
+                                currentChunk = sentence;
+                            } else {
+                                currentChunk += sentence;
+                            }
+                        });
+                        if (currentChunk) chunks.push(currentChunk.trim());
+                    } else {
+                        chunks.push(section);
+                    }
+                }
+            });
+            
+            return chunks.length > 0 ? chunks : [text];
+        }
+
+        // Calculate reading delay
+        function getReadingDelay(text) {
+            const charsPerSecond = 15;
+            const minDelay = 1000;
+            const maxDelay = 3000;
+            const delay = (text.length / charsPerSecond) * 1000;
+            return Math.min(Math.max(delay, minDelay), maxDelay);
+        }
+
         // Format Claude's markdown responses
         function formatMarkdown(text) {
             return text
@@ -849,7 +897,6 @@
                 .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
                 .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
                 // Line breaks
-                .replace(/\n\n/g, '</p><p>')
                 .replace(/\n/g, '<br/>');
         }
 
@@ -1769,57 +1816,49 @@
                 hideTyping();
                 const response = await botRespond(message);
                 
-                response.messages.forEach((msg, index) => {
+                let totalDelay = 0;
+                const hasQuickReplies = response.quickReplies;
+                const allMessages = [];
+                
+                // Process each message into chunks
+                response.messages.forEach((msg) => {
+                    if (typeof msg === 'string') {
+                        const chunks = splitIntoChunks(msg);
+                        chunks.forEach(chunk => {
+                            allMessages.push({type: 'text', content: chunk});
+                        });
+                    } else {
+                        allMessages.push({type: 'card', content: msg});
+                    }
+                });
+                
+                // Display messages with delays
+                allMessages.forEach((item, index) => {
                     setTimeout(() => {
-                        if (typeof msg === 'string') {
+                        if (item.type === 'text') {
                             showTyping();
                             setTimeout(() => {
                                 hideTyping();
-                                addMessage(msg);
-                                
-                                // Add quick replies after last message
-                                if (index === response.messages.length - 1 && response.quickReplies) {
-                                    setTimeout(() => {
-                                        addQuickReplies(response.quickReplies);
-                                    }, 500);
-                                }
-                            }, 800);
+                                addMessage(item.content);
+                            }, 500);
                         } else {
-                            // It's an element (activity card)
-                            addMessage(msg);
-                            
-                            // Add quick replies after last message
-                            if (index === response.messages.length - 1 && response.quickReplies) {
-                                setTimeout(() => {
-                                    addQuickReplies(response.quickReplies);
-                                }, 500);
-                            }
+                            addMessage(item.content);
                         }
-                    }, index * 1200);
-                });
-            }, 1000);
-        }
-
-        // Send user info via email
-        async function sendUserInfoEmail(name, affiliation) {
-            try {
-                const timestamp = new Date().toLocaleString();
-                
-                // Using Google Apps Script Web App endpoint
-                // Replace YOUR_GOOGLE_APPS_SCRIPT_URL_HERE with deployed script URL
-                const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-                
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        affiliation: affiliation,
-                        timestamp: timestamp
-                    })
+                        
+                        // Add quick replies after last item
+                        if (index === allMessages.length - 1 && hasQuickReplies) {
+                            setTimeout(() => {
+                                addQuickReplies(response.quickReplies);
+                            }, 500);
+                        }
+                    }, totalDelay);
+                    
+                    // Calculate next delay
+                    if (item.type === 'text') {
+                        totalDelay += 500 + getReadingDelay(item.content);
+                    } else {
+                        totalDelay += 300;
+                    }
                 });
                 
                 console.log('User info sent:', name, affiliation);
