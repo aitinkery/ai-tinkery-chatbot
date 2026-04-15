@@ -95,12 +95,14 @@
         .chat-header .stanford-logo {
             height: 50px;
             max-width: 300px;
+            background-color: transparent;
         }
 
         .chat-header .stanford-logo img {
             height: 100%;
             width: auto;
             object-fit: contain;
+            mix-blend-mode: multiply;
         }
 
         .chat-header .logo img {
@@ -1877,6 +1879,7 @@
                     } else {
                         totalDelay += 500;
                     }
+                });
                 });
             }, 1000);
         }
