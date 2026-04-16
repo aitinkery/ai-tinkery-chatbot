@@ -1,15 +1,18 @@
-import http.server
 import urllib.request
-import urllib.error
 import json
 import os
 import re
 import threading
 
+from flask import Flask, request, jsonify, send_from_directory
+
 CLAUDE_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbygP5mGHqEprhWDEVhEYahonPnPhZLSpwLoGo5n39-RttowqSp_qKAs1MEYERrZ0kaz/exec'
 AIRTABLE_BASE = 'appEUXFXlnxrxY4OG'
 AIRTABLE_TABLE = 'Activities'
-HTML_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+HTML_FILE = os.path.join(BASE_DIR, 'index.html')
+
+app = Flask(__name__, static_folder=BASE_DIR, static_url_path='')
 
 
 def fetch_airtable_images():
@@ -65,55 +68,53 @@ def fetch_airtable_images():
         print(f'[Airtable] Image refresh failed: {e}')
 
 
-class Handler(http.server.SimpleHTTPRequestHandler):
-    def do_POST(self):
-        if self.path == '/api/claude':
-            try:
-                length = int(self.headers.get('Content-Length', 0))
-                body = self.rfile.read(length)
+@app.route('/')
+def index():
+    return send_from_directory(BASE_DIR, 'index.html')
 
-                req = urllib.request.Request(
-                    CLAUDE_BACKEND_URL,
-                    data=body,
-                    headers={'Content-Type': 'text/plain;charset=utf-8'},
-                    method='POST'
-                )
 
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    response_body = resp.read()
+@app.route('/sw.js')
+def service_worker():
+    response = send_from_directory(BASE_DIR, 'sw.js')
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
-                self.send_response(200)
-                self.send_header('Content-Type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(response_body)
 
-            except Exception as e:
-                error = json.dumps({'success': False, 'error': str(e)}).encode()
-                self.send_response(500)
-                self.send_header('Content-Type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(error)
-        else:
-            self.send_response(404)
-            self.end_headers()
+@app.route('/api/claude', methods=['POST', 'OPTIONS'])
+def claude_proxy():
+    if request.method == 'OPTIONS':
+        response = app.make_default_options_response()
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+        return response
 
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.end_headers()
+    try:
+        body = request.get_data()
+        req = urllib.request.Request(
+            CLAUDE_BACKEND_URL,
+            data=body,
+            headers={'Content-Type': 'text/plain;charset=utf-8'},
+            method='POST'
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            response_body = resp.read()
 
-    def log_message(self, format, *args):
-        print(f'{self.address_string()} - {format % args}')
+        response = app.response_class(
+            response=response_body,
+            status=200,
+            mimetype='application/json'
+        )
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
+
+    except Exception as e:
+        response = jsonify({'success': False, 'error': str(e)})
+        response.status_code = 500
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
 
 if __name__ == '__main__':
-    os.chdir(os.path.dirname(os.path.abspath(__file__)))
-    # Refresh images in background so startup isn't delayed
     threading.Thread(target=fetch_airtable_images, daemon=True).start()
-    server = http.server.HTTPServer(('0.0.0.0', 5000), Handler)
-    print('Serving on http://0.0.0.0:5000')
-    server.serve_forever()
+    app.run(host='0.0.0.0', port=5000, debug=False)
