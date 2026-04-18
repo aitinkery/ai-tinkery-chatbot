@@ -822,7 +822,7 @@
             userAffiliation: '',
             path: '', // 'activities' or 'launch'
             interests: [],
-            step: 'initial' // initial, name, affiliation, path, interests, conversation
+            step: 'conversation' // initial, name, affiliation, path, interests, conversation
         };
         let conversationHistory = [];
 
@@ -870,19 +870,11 @@
 
         // Reset
         resetBtn.addEventListener('click', () => {
-            if (confirm('Start over as a new user?')) {
-                state = {
-                    userName: '',
-                    userAffiliation: '',
-                    path: '',
-                    interests: [],
-                    step: 'initial'
-                };
+            if (confirm('Clear conversation?')) {
                 conversationHistory = [];
                 conversation.innerHTML = '';
                 userInput.value = '';
                 localStorage.removeItem('aiTinkeryState');
-                location.reload();
             }
         });;
 
@@ -996,45 +988,7 @@
                 sendBtn.disabled = true;
                 userInput.disabled = true;
 
-                // Handle onboarding flow
-                if (state.step === 'initial' || state.step === 'name') {
-                    state.userName = userMessage;
-                    state.step = 'affiliation';
-                    saveState();
-                    addBotMessage(`Nice to meet you, ${state.userName}! What's your affiliation? (e.g., Stanford student, teacher, community member)`);
-                    sendBtn.disabled = false;
-                    userInput.disabled = false;
-                    userInput.focus();
-                    return;
-                }
-
-                if (state.step === 'affiliation') {
-                    state.userAffiliation = userMessage;
-                    state.step = 'path';
-                    saveState();
-                    addBotMessage(`Great, ${state.userName}! What would you like to explore?`);
-                    
-                    // Show path options
-                    setTimeout(() => {
-                        const pathMsg = document.createElement('div');
-                        pathMsg.className = 'message bot';
-                        pathMsg.innerHTML = `
-                            <div style="display: flex; gap: 12px; margin-top: 12px;">
-                                <button class="quick-reply-btn" onclick="selectPath('activities')">🎯 Explore Activities</button>
-                                <button class="quick-reply-btn" onclick="selectPath('launch')">🚀 Launch a Tinkery</button>
-                            </div>
-                        `;
-                        conversation.appendChild(pathMsg);
-                        scrollToBottom();
-                    }, 500);
-                    
-                    sendBtn.disabled = false;
-                    userInput.disabled = false;
-                    userInput.focus();
-                    return;
-                }
-
-                // Regular conversation flow
+                // Add to conversation history
                 conversationHistory.push({
                     role: 'user',
                     content: userMessage
@@ -1049,10 +1003,7 @@
                     },
                     body: JSON.stringify({
                         message: userMessage,
-                        conversationHistory: conversationHistory,
-                        userName: state.userName,
-                        userAffiliation: state.userAffiliation,
-                        userPath: state.path
+                        conversationHistory: conversationHistory
                     })
                 });
 
@@ -1084,7 +1035,6 @@
             }
         }
 
-        // Path selection function
         window.selectPath = function(path) {
             state.path = path;
             state.step = 'conversation';
@@ -1100,14 +1050,6 @@
             }
         }
 
-        // Check onboarding status on load
-        if (!state.userName) {
-            setTimeout(() => {
-                addBotMessage("👋 Hi there! I'm your AI Tinkery guide. What's your name?");
-                state.step = 'name';
-                saveState();
-            }, 500);
-        }
         </script>
 </body>
 </html>
