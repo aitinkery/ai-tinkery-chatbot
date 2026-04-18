@@ -299,7 +299,13 @@
     </div>
 
     <script>
-        // Basic interaction
+        // Claude Backend Configuration
+        const CLAUDE_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbygP5mGHqEprhWDEVhEYahonPnPhZLSpwLoGo5n39-RttowqSp_qKAs1MEYERrZ0kaz/exec';
+
+        // State management
+        let conversationHistory = [];
+
+        // DOM elements
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const conversation = document.getElementById('conversation');
@@ -311,7 +317,6 @@
             btn.addEventListener('click', () => {
                 const text = btn.textContent;
                 addUserMessage(text);
-                // Handle response (connect to Claude backend)
                 handleUserInput(text);
             });
         });
@@ -319,11 +324,15 @@
         // Send button
         sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         // Reset
         resetBtn.addEventListener('click', () => {
+            conversationHistory = [];
             conversation.innerHTML = '';
             userInput.value = '';
         });
@@ -340,24 +349,86 @@
         function addUserMessage(text) {
             const msg = document.createElement('div');
             msg.className = 'message user';
-            msg.innerHTML = `<p>${text}</p>`;
+            msg.innerHTML = `<p>${escapeHtml(text)}</p>`;
             conversation.appendChild(msg);
-            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            scrollToBottom();
         }
 
         function addBotMessage(text) {
             const msg = document.createElement('div');
             msg.className = 'message bot';
-            msg.innerHTML = `<p>${text}</p>`;
+            msg.innerHTML = formatMarkdown(text);
             conversation.appendChild(msg);
-            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            scrollToBottom();
         }
 
-        function handleUserInput(text) {
-            // Placeholder - connect to Claude backend
+        function scrollToBottom() {
             setTimeout(() => {
-                addBotMessage('This is a placeholder response. Connect to Claude backend for real responses.');
-            }, 500);
+                conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatMarkdown(text) {
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
+                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+                .replace(/\n/g, '<br/>');
+        }
+
+        async function handleUserInput(userMessage) {
+            try {
+                // Disable input while processing
+                sendBtn.disabled = true;
+                userInput.disabled = true;
+
+                // Add to conversation history
+                conversationHistory.push({
+                    role: 'user',
+                    content: userMessage
+                });
+
+                // Call Claude backend
+                const response = await fetch(CLAUDE_BACKEND_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: userMessage,
+                        conversationHistory: conversationHistory
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.response) {
+                    addBotMessage(data.response);
+                    conversationHistory.push({
+                        role: 'assistant',
+                        content: data.response
+                    });
+                } else {
+                    throw new Error('No response from backend');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                addBotMessage('Sorry, I encountered an error. Please try again.');
+            } finally {
+                // Re-enable input
+                sendBtn.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
+            }
         }
     </script>
 </body>
