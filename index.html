@@ -957,10 +957,10 @@
 
         // Calculate reading delay
         function getReadingDelay(text) {
-            const minDelay = 3000; // 3 seconds minimum
-            const maxDelay = 5000; // 5 seconds maximum
-            const words = text.split(/\s+/).length;
-            const delay = words * 250; // 250ms per word
+            const minDelay = 2000; // 2 seconds minimum
+            const maxDelay = 4000; // 4 seconds maximum
+            const words = text.split(/s+/).length;
+            const delay = words * 200; // 200ms per word // 250ms per word
             return Math.min(Math.max(delay, minDelay), maxDelay);
         }
 
