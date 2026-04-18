@@ -1,24 +1,36 @@
 {
   "name": "AI Tinkery | Stanford",
   "short_name": "AI Tinkery",
-  "description": "Explore AI activities at the Stanford AI Tinkery",
+  "description": "Explore hands-on AI learning activities at the Stanford AI Tinkery",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#B83A4B",
-  "orientation": "portrait-primary",
+  "background_color": "#f7f7f7",
+  "theme_color": "#c7520a",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "/images/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/images/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

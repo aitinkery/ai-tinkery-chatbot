@@ -1,9 +1,11 @@
-const CACHE_NAME = 'ai-tinkery-v1';
+const CACHE_NAME = 'ai-tinkery-v2';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/manifest.json',
   '/images/robot-logo.jpg',
   '/images/stanford-logo.jpg',
+  '/images/apple-touch-icon.png',
   '/images/icon-192.png',
   '/images/icon-512.png'
 ];
@@ -25,10 +27,11 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Always use network for API calls
+  // Always use network for API calls — never cache
   if (event.request.url.includes('/api/')) {
     return;
   }
+
   event.respondWith(
     fetch(event.request)
       .then(response => {
