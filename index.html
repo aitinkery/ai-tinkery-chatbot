@@ -2,14 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
-    <title>AI Tinkery Chatbot | Stanford</title>
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#B83A4B">
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="AI Tinkery">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tinkery | Stanford</title>
     <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -19,2019 +13,351 @@
         }
 
         body {
-            font-family: 'Source Sans 3', sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-            color: #fff;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f7f7f7;
+            color: #191d19;
+            line-height: 1.6;
         }
 
-        .chat-container {
-            width: 90%;
-            max-width: 800px;
-            height: 90vh;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            padding: 19px 47px;
+            background: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .chat-header {
-            background: #FFFFFF;
-            color: #1a1a1a;
-            padding: 20px;
-            text-align: center;
-            font-family: 'Bungee', cursive;
-            font-size: 24px;
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            border-bottom: 3px solid #B83A4B;
         }
 
         .header-title {
             display: flex;
             align-items: center;
             gap: 15px;
-            flex: 1;
-            justify-content: center;
+        }
+
+        .logo {
+            width: 94px;
+            height: 94px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .title-text {
-            font-size: 36px;
+            font-family: 'Bungee', cursive;
+            font-size: 32px;
             color: #c7520a;
             font-weight: bold;
         }
 
+        .stanford-logo img {
+            height: 50px;
+            max-width: 300px;
+            object-fit: contain;
+        }
+
         .reset-btn {
-            background: #B83A4B;
-            border: 2px solid #B83A4B;
+            background: #c7520a;
+            border: 2px solid #c7520a;
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 9px 19px;
+            border-radius: 9999px;
             cursor: pointer;
-            font-size: 14px;
-            font-family: 'Source Sans 3', sans-serif;
-            font-weight: 600;
+            font-size: 16px;
+            font-weight: 700;
             transition: all 0.2s;
             white-space: nowrap;
         }
 
         .reset-btn:hover {
-            background: #8C1515;
-            border-color: #8C1515;
-            color: white;
+            background: #a34308;
+            border-color: #a34308;
         }
 
-        .chat-header .logo {
-            width: 119px;
-            height: 119px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .chat-header .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: transparent;
-        }
-        .chat-header .stanford-logo {
-            height: 50px;
-            max-width: 300px;
-            background-color: transparent;
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 23px 47px 234px 47px;
         }
 
-        .chat-header .stanford-logo img {
-            height: 100%;
-            width: auto;
-            object-fit: contain;
+        /* Hero Section */
+        .hero {
+            padding: 19px 0 28px 0;
         }
 
-        .chat-header .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .hero h1 {
+            font-family: 'Bungee', cursive;
+            font-size: 50px;
+            line-height: 1.1;
+            color: #191d19;
+            margin-bottom: 9px;
         }
 
-        .chat-messages {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .hero h2 {
+            font-size: 21px;
+            font-weight: 700;
+            color: #191d19;
+            margin-bottom: 19px;
         }
 
-        .message {
-            display: flex;
-            gap: 10px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .message.bot {
-            align-self: flex-start;
-        }
-
-        .message.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #B83A4B;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-            padding: 6px;
-        }
-
-        .message-avatar svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .message.user .message-avatar {
-            background: #333;
-        }
-
-        .message-content {
-            max-width: 70%;
-            padding: 12px 18px;
-            border-radius: 18px;
+        .hero-content {
+            color: #474747;
+            font-size: 17px;
             line-height: 1.5;
         }
 
-        .message.bot .message-content {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
+        .hero-content p {
+            margin-bottom: 14px;
         }
 
-        .message-content p {
-            margin: 0 0 12px 0;
-            line-height: 1.6;
-        }
-
-        .message-content p:last-child {
-            margin-bottom: 0;
-        }
-
-        .message-content ul,
-        .message-content ol {
-            margin: 8px 0;
-            padding-left: 20px;
-        }
-
-        .message-content li {
-            margin: 4px 0;
-            line-height: 1.5;
-        }
-
-        .message-content strong {
+        .hero-content strong {
+            color: #191d19;
             font-weight: 600;
-            color: #B83A4B;
         }
 
-        .message.user .message-content {
-            background: #B83A4B;
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
+        /* Quick Replies */
         .quick-replies {
+            margin: 23px 0;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-            padding: 0 10px;
+            gap: 12px;
         }
 
         .quick-reply-btn {
-            background: white;
-            border: 2px solid #B83A4B;
-            color: #B83A4B;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background: #c7520a;
+            color: white;
+            border: 1px solid #c7520a;
+            padding: 12px 19px;
+            border-radius: 9999px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 16px;
             transition: all 0.2s;
+            font-weight: 400;
         }
 
         .quick-reply-btn:hover {
-            background: #B83A4B;
-            color: white;
+            background: #a34308;
+            border-color: #a34308;
         }
 
-        .activity-card {
-            background: linear-gradient(135deg, #B83A4B 0%, #c7520a 100%);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-size: 13px;
+        /* Conversation Area */
+        .conversation {
+            margin-top: 40px;
         }
 
-        .activity-card:hover {
-            transform: translateY(-2px);
+        .message {
+            margin-bottom: 28px;
+            max-width: 100%;
         }
 
-        .activity-card h4 {
-            font-family: 'Bungee', cursive;
-            margin-bottom: 6px;
-            font-size: 15px;
+        .message.bot {
+            color: #191d19;
         }
 
-        .activity-card p {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 6px;
-            line-height: 1.3;
+        .message.user {
+            color: #51c0e2;
+            font-weight: 600;
+            margin-left: 40px;
         }
 
-        .activity-meta {
-            font-size: 11px;
-            opacity: 0.8;
-            display: flex;
-            gap: 10px;
+        .message p {
+            margin-bottom: 14px;
+            font-size: 17px;
         }
 
-        .chat-input-container {
+        /* Input Container */
+        .input-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(247, 247, 247, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 20px;
-            background: white;
-            border-top: 2px solid #f0f0f0;
+            border-top: 1px solid rgba(26, 26, 26, 0.1);
+        }
+
+        .input-container {
+            max-width: 900px;
+            margin: 0 auto;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            background: white;
+            border-radius: 9999px;
+            border: 1px solid #d0d0d0;
+            padding: 14px 14px 14px 23px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        .chat-input {
+        #userInput {
             flex: 1;
-            padding: 12px 18px;
-            border: 2px solid #ddd;
-            border-radius: 25px;
-            font-size: 16px;
-            font-family: 'Source Sans 3', sans-serif;
+            border: none;
             outline: none;
-            transition: border-color 0.2s;
+            font-size: 16px;
+            color: #222222;
+            background: transparent;
+            font-family: 'Source Sans 3', sans-serif;
         }
 
-        .chat-input:focus {
-            border-color: #B83A4B;
+        #userInput::placeholder {
+            color: #adadad;
         }
 
         .send-btn {
-            background: #B83A4B;
+            background: #c7520a;
             color: white;
             border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            padding: 12px 23px;
+            border-radius: 9999px;
             cursor: pointer;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
             transition: background 0.2s;
+            margin-left: 9px;
         }
 
         .send-btn:hover {
-            background: #c7520a;
+            background: #a34308;
         }
 
         .send-btn:disabled {
-            background: #ccc;
+            opacity: 0.4;
             cursor: not-allowed;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 12px 18px;
-            background: white;
-            border-radius: 18px;
-            width: fit-content;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: #B83A4B;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-            }
-            30% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .link {
-            color: #B83A4B;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                align-items: stretch;
-                padding: 0;
-                position: fixed;
-                inset: 0;
-                overflow: hidden;
-            }
-
-            .chat-container {
-                position: fixed;
-                inset: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
-            }
-
-            .chat-header {
-                padding: 10px 12px;
-                gap: 8px;
-            }
-
-            .chat-header .logo {
-                width: 48px;
-                height: 48px;
-                flex-shrink: 0;
-            }
-
-            .header-title {
-                gap: 8px;
-                flex: 1;
-                min-width: 0;
-            }
-
-            .title-text {
-                font-size: 22px;
-            }
-
-            .chat-header .stanford-logo {
-                display: none;
-            }
-
-            .reset-btn {
-                font-size: 12px;
-                padding: 6px 10px;
-                flex-shrink: 0;
-            }
-
-            .chat-input-container {
-                padding: 12px;
-                padding-bottom: max(12px, env(safe-area-inset-bottom));
-            }
-
-            .message-content {
-                max-width: 85%;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
+    <!-- Header -->
+    <header>
+        <div class="header-content">
             <div class="header-title">
-                <div class="logo"><img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/robot-logo.jpg" alt="Robot" /></div>
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/robot-logo.jpg" alt="AI Tinkery Robot">
+                </div>
                 <div class="title-text">AI Tinkery</div>
             </div>
             <div class="stanford-logo">
-                <img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/stanford-logo.jpg" alt="Stanford Accelerator for Learning" />
+                <img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/stanford-logo.jpg" alt="Stanford Accelerator for Learning">
             </div>
             <button class="reset-btn" id="resetBtn">New User</button>
         </div>
-        
-        <div class="chat-messages" id="messages"></div>
-        
-        <div class="chat-input-container">
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section (Static) -->
+        <section class="hero">
+            <h1>Hi! I'm your AI Tinkery guide</h1>
+            <h2>Here to help you explore hands-on AI learning at Stanford</h2>
+            <div class="hero-content">
+                <p>At the <strong>AI Tinkery</strong>, we believe learning should feel <strong>personal</strong>—not templated. That's why we built this as a <strong>conversation</strong>, not a brochure.</p>
+                <p>Most people want to learn AI but don't know where to start. The AI Tinkery helps you <strong>discover activities that match your interests</strong>, <strong>explore hands-on projects</strong>, and <strong>decide</strong> what to try first.</p>
+                <p>Tell me what brings you here, and I'll keep it relevant.</p>
+            </div>
+        </section>
+
+        <!-- Quick Replies -->
+        <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply-btn">I want to explore activities</button>
+            <button class="quick-reply-btn">Tell me about the Tinkery</button>
+            <button class="quick-reply-btn">I need clarity on AI tools</button>
+            <button class="quick-reply-btn">What should I try first?</button>
+            <button class="quick-reply-btn">Launch my own Tinkery</button>
+            <button class="quick-reply-btn">Just exploring</button>
+        </div>
+
+        <!-- Conversation Area -->
+        <div class="conversation" id="conversation"></div>
+    </main>
+
+    <!-- Input Area -->
+    <div class="input-wrapper">
+        <div class="input-container">
             <input 
                 type="text" 
-                class="chat-input" 
                 id="userInput" 
-                placeholder="Type your message..."
-                autocomplete="off"
+                placeholder="What do you want to know about the AI Tinkery? Type your questions here..."
+                maxlength="500"
             >
-            <button class="send-btn" id="sendBtn">➤</button>
+            <button class="send-btn" id="sendBtn">Send</button>
         </div>
     </div>
 
     <script>
-        // Activity data from Airtable
-        const ACTIVITIES = [
-            {
-                name: "Build-a-Bot",
-                type: "Task Card",
-                time: "45 minutes",
-                audience: ["Teacher"],
-                description: "Create a custom chatbot using bot101.app",
-                link: "https://craft.stanford.edu/resource/how-can-i-build-my-own-chatbot/",
-                category: "Create With AI",
-                keywords: ["create","build","make","design","game","chatbot","website"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-01.jpg"
-            },
-            {
-                name: "I Love Algorithms Card Game",
-                type: "Task Card",
-                time: "45 minutes",
-                audience: ["Student"],
-                description: "PLAY and TINKER  Go to the website and explore a hands-on resource for understanding machine learning without needing any code or screens.",
-                link: "https://dschool.stanford.edu/tools/i-love-algorithms-machineless-machine-learning",
-                category: "Learn About AI",
-                keywords: ["learn","understand","fundamentals","intro","coding"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-02.jpg"
-            },
-            {
-                name: "Learning Math with AI",
-                type: "Task Card",
-                time: "20 minutes ",
-                audience: ["Student"],
-                description: "Experience learning math with the help of an LLM",
-                link: "https://docs.google.com/document/d/1i8BPY3XOkEUNViFEZzXt19EinpntNhFuphSQhWFzSBE/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning","math"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-03.jpg"
-            },
-            {
-                name: "Creativity in the Age of AI",
-                type: "Facilitator Instructions",
-                time: "1 hour ",
-                audience: ["Teacher","Student"],
-                description: "Read and discuss three articles about creativity and AI from the Stanford d.school",
-                link: "https://docs.google.com/document/d/1HVtq9IDamGjF_djwOBUkVRTbosBMsZ0dO1rtL7nzzds/edit",
-                category: "Create With AI",
-                keywords: ["create","build","make","design","game","chatbot","website","creativity"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-04.jpg"
-            },
-            {
-                name: "Design How AI Fits Your Workflow",
-                type: "Task Card",
-                time: "45 minutes",
-                audience: ["Teacher"],
-                description: "This activity introduces a structured five-stage workflow design process that helps you evaluate which parts of your work are genuinely suited for AI assistance and which should remain human-led. Rather than asking \"How do I use AI?\" the better question is \"Where does AI actually add value?\"",
-                link: "https://docs.google.com/document/d/1AWzYTQNo8uM16QxOpLTBaixIse6wMFry/edit?usp=drive_link&ouid=112419098796256480269&rtpof=true&sd=true",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-05.jpg"
-            },
-            {
-                name: "Gradiants",
-                type: "Slide Deck",
-                time: "30 minutes ",
-                audience: ["Teacher"],
-                description: "Map what aspects of work should/can use AI",
-                link: "https://www.graidients.ai/v1/",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-06.jpg"
-            },
-            {
-                name: "Teachable Machine: Pose Model",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "This hands-on experience with training your own AI model reveals how machine learning works: you provide examples, the model finds patterns, and then it makes predictions on new data.",
-                link: "https://docs.google.com/document/d/1Z0sdRHZBtllmfec2Rc9B1sH6ujNJHqyH/edit?usp=sharing&ouid=112419098796256480269&rtpof=true&sd=true",
-                category: "Shape AI",
-                keywords: ["shape","customize","train","model","agent"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-07.jpg"
-            },
-            {
-                name: "Text to Virtual Reality",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "PLAY and TINKER Go to skybox.blockadelabs.com to create 360 degree virtual worlds with simple text prompts.  REFLECT How does using this tool shift your role as a creator/thinker?  How could this tool be used for education, storytelling, or environmental simulations?",
-                link: "skybox.blockadelabs.com",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","prompting","storytelling"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-08.jpg"
-            },
-            {
-                name: "Prompting Without a Keyboard",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "Explore voice-based prompting using any available voice interface. Practice \"thinking out loud\" to an AI, learn how conversational prompting differs from written prompts, and discover which tasks work best with voice interaction. By the end, you'll have developed strategies for effective voice prompting in your own context.",
-                link: "https://docs.google.com/document/d/1P596JWnkat5OqR4p9QdOCX7TKfxj_YpE/edit",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","chatbot","prompting"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-09.jpg"
-            },
-            {
-                name: "AI Game Creator",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "AI-powered game creation tools allow you to build playable educational games by describing what you want in plain language. Platforms like Rosebud AI, Google Gemini Canvas, and Lovable lower the barrier to game development—no coding required. You can create quiz games, interactive simulations, choose-your-own-adventure stories, and more.",
-                link: "https://docs.google.com/document/d/1a_45vs8vzJDisMhxZpb9EHdOZ3vvFig7/edit?usp=sharing&ouid=112419098796256480269&rtpof=true&sd=true",
-                category: "Create With AI",
-                keywords: ["create","build","make","design","game","chatbot","website"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-10.jpg"
-            },
-            {
-                name: "AI or Not? (Virtual)",
-                type: "Slide Deck",
-                time: "15 minutes",
-                audience: ["Teacher","Student"],
-                description: "Sort cards into AI or Not and generalize a rule",
-                link: "https://craft.stanford.edu/resource/ai-or-not-ai/",
-                category: "Learn About AI",
-                keywords: ["learn","understand","fundamentals","intro"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-11.jpg"
-            },
-            {
-                name: "Prompting Lab",
-                type: "Slide Deck",
-                time: "30 minutes",
-                audience: ["Teacher","Student"],
-                description: "Experiment with structured, conversational, and meta prompting strategies",
-                link: "https://docs.google.com/presentation/d/1_nbaYNLJSqbGPBrjW0q3z9JOjqdau7-caVzaynM-mOg/edit",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","chatbot","prompting"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-12.jpg"
-            },
-            {
-                name: "Text to 3D Objects ",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "PLAY and TINKER Visit meshy.ai to input a description of the 3D object you want. Meshy will generate a model you can view, edit, and download.  REFLECT How does using this tool shift your role as a creator/thinker? What new possibilities does this tool create for educators?",
-                link: "meshy.ai",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","3d"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-13.jpg"
-            },
-            {
-                name: "Keep Your Data Private",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Teacher"],
-                description: "PLAY and TINKER Host a chatbot on your laptop, entirely offline with Chatbox.  REFLECT How does running AI models locally change your control over data privacy?",
-                link: "chatboxai.app",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact","chatbot","privacy"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-14.jpg"
-            },
-            {
-                name: "More than GenAI",
-                type: "Slide Deck",
-                time: "1 hour",
-                audience: ["Teacher","Student"],
-                description: "Sort AIs into groups; Build your own classifier",
-                link: "https://docs.google.com/presentation/d/1mKF_PJEbVEqcxUG4_wuSqyMatc1wAqsCFD6G7aqYrD8/edit",
-                category: "Learn About AI",
-                keywords: ["learn","understand","fundamentals","intro"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-15.jpg"
-            },
-            {
-                name: "AI + Storytelling",
-                type: "Facilitator Instructions",
-                time: "45 minutes",
-                audience: ["Student"],
-                description: "In this lesson, students will explore how AI can be used in storytelling including how to consider the benefits and trade-offs of incorporating AI into the storytelling process.",
-                link: "https://craft.stanford.edu/resource/can-ai-help-with-storytelling/",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning","storytelling"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-16.jpg"
-            },
-            {
-                name: "LLM Learning Modes",
-                type: "Slide Deck",
-                time: "30 minutes ",
-                audience: ["Teacher"],
-                description: "Compare normal mode to learning mode across LLMs",
-                link: "https://docs.google.com/presentation/d/1e7bQQ_TdcncLjkYlr7M1YBXwuocTho-28--SIPd37ok/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-17.jpg"
-            },
-            {
-                name: "The Bookshelf - Critical AI Literacy Library",
-                type: "Resource Guide",
-                time: "N/A",
-                audience: ["Teacher"],
-                description: "Curated book collection on AI and society",
-                link: "https://docs.google.com/document/u/0/d/1PvyxI9k7TfIvzp2nY5yDD5gKJsXQ-QLMccRiYT6MYFk/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-18.jpg"
-            },
-            {
-                name: "AI Music Generator",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "PLAY and TINKER Visit Suno.com to generate music in minutes. Customize tracks by selecting mood, length, and instruments to match your creative needs.  REFLECT How does AI-generated music compare to human-composed music in terms of creativity and originality? If you didn't tell someone this was AI-generated, would they know? Does it matter?",
-                link: "suno.com",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","music","creativity"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-19.jpg"
-            },
-            {
-                name: "Instructional Materials GenAI",
-                type: "Task Card",
-                time: "45 minutes ",
-                audience: ["Teacher"],
-                description: "Create an instructional material to meet a learning objective",
-                link: "https://docs.google.com/document/d/1SsPuM45IlhBzIP8HeDfja2prgEYZhaWV2M7cLgpHTHw/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-20.jpg"
-            },
-            {
-                name: "Quickdraw",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "Players sketch doodles while a neural network tries to guess what they're drawing in real time. A fun, hands-on way to experience how machine learning models recognize patterns and learn from data.",
-                link: "https://drive.google.com/file/d/1plLvNv7_amjyMSEpEbpvwtZmQecaYK0K/view",
-                category: "Learn About AI",
-                keywords: ["learn","understand","fundamentals","intro"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-21.jpg"
-            },
-            {
-                name: "Working Groups Facilitator Guide",
-                type: "Resource Guide",
-                time: "N/A",
-                audience: ["Teacher"],
-                description: "Facilitation guide for running multi-session working groups",
-                link: "https://docs.google.com/document/u/0/d/1CMUrShHJ8d91PNdwRuuc5-K1PkDtydIGDnFKz3LJrOY/edit",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-22.jpg"
-            },
-            {
-                name: "AI + Education Resource Repository",
-                type: "Resource Guide",
-                time: "N/A",
-                audience: ["Teacher"],
-                description: "Explore curated research and frameworks on AI in education",
-                link: "https://docs.google.com/document/d/1WpvoOuOQHQEHU7gGiQCAyFQiJP0l173DPWMmukg1AcE/edit",
-                category: "Learn About AI",
-                keywords: ["learn","understand","fundamentals","intro","research"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-23.jpg"
-            },
-            {
-                name: "Curiosity Boards - Resource Guide",
-                type: "Resource Guide",
-                time: "N/A",
-                audience: ["Teacher"],
-                description: "Visual interactive installations for AI exploration",
-                link: "https://docs.google.com/document/u/0/d/1cibLKLnawCDsUFNLYMwE0_vcqu78VBYc5sNy0x1jaLM/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning","images"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-24.jpg"
-            },
-            {
-                name: "Create and Edit Images",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "PLAY and TINKER Visit canva.com to experiment with AI-powered features like text-to-image, background remover, and magic resize to create custom educational materials effortlessly.",
-                link: "canva.com",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","images"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-25.jpg"
-            },
-            {
-                name: "Prompting Environmental Impact",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "Practice structuring and revising prompts for environmental efficiency without losing effectiveness or quality of the output.",
-                link: "https://docs.google.com/document/d/1TZT-0s6SUqeAyaGb6Xrh74XAdlhF2bFF_rSO04xoP5g/edit?usp=sharing",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact","prompting"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-26.jpg"
-            },
-            {
-                name: "Deep Research",
-                type: "Image",
-                time: "15 minutes ",
-                audience: ["Teacher","Student"],
-                description: "Use the Deep Research functionality in ChatGPT",
-                link: "https://drive.google.com/file/d/1UlhX-aRDbQsXZEkT1z8Y-EFZDPSXunlt/view",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","research"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-27.jpg"
-            },
-            {
-                name: "Brainstorming AI Use Cases",
-                type: "Slide Deck",
-                time: "15 minutes",
-                audience: ["Teacher","Student"],
-                description: "Brainstorm AI use cases by role/context; Risk vs Reward Map",
-                link: "https://docs.google.com/presentation/d/1y9KGDG_kqMfMZwz9ijh_DlMOjxBtMEy2B49j9UXqx8c/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-28.jpg"
-            },
-            {
-                name: "AI Quests",
-                type: "Facilitator Instructions",
-                time: "45 minutes",
-                audience: ["Student"],
-                description: "This resource is based on AI Quests,  a game-based learning experience designed to teach middle school students (ages 11-14) about AI",
-                link: "https://craft.stanford.edu/resource/how-can-ai-help-a-community-prepare-for-a-flood/",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning","game"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-29.jpg"
-            },
-            {
-                name: "Vibe Code a Website",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Teacher"],
-                description: "Step-by-step guide to deploy a vibe coded tool",
-                link: "https://docs.google.com/document/d/1Kl3G3DP1_7Gl5HpMl_5QrXallxb9sKoBz2I3qaySpbA/edit",
-                category: "Create With AI",
-                keywords: ["create","build","make","design","game","chatbot","website","coding"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-30.jpg"
-            },
-            {
-                name: "Feedback & Assessments with AI",
-                type: "Slide Deck",
-                time: "30 minutes ",
-                audience: ["Teacher"],
-                description: "Set up ChatGPT to provide feedback on student work",
-                link: "https://docs.google.com/presentation/d/1Mz0jUSYyeK3OunjA3TG53cH9dRe4NpCapcxNAAf1CtM/edit",
-                category: "Learn/Teach With AI",
-                keywords: ["teach","education","classroom","student","learning"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-31.jpg"
-            },
-            {
-                name: "Literature Review Strategy with GenAI",
-                type: "Task Card",
-                time: "15 minutes",
-                audience: ["Student"],
-                description: "Use AI to assist with the literature review process",
-                link: "https://docs.google.com/document/u/0/d/1SwHCjFkJlHNHBH848Ey9lARpH9e3b75tqnTFnqZrGac/edit",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-32.jpg"
-            },
-            {
-                name: "Evaluating GenAI Images",
-                type: "Task Card",
-                time: "1 hour",
-                audience: ["Teacher","Student"],
-                description: "Create AI images and evaluate them for stereotypes and biases",
-                link: "https://docs.google.com/document/d/1newdAI7kplwf7LiPFuwkjGMQPn9DOb5IuX5C022c7jc/edit",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact","images"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-33.jpg"
-            },
-            {
-                name: "Meta-prompting",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "Meta-prompting is the practice of using an chatbot to design, refine, and optimize prompts. This process helps improve your results and teaches you how to use AI more effectively.",
-                link: "https://docs.google.com/document/d/1chUWs6xPlJjm_yxLVZNmGauoISGgIcWwgV6JptEESyQ/edit?usp=sharing",
-                category: "Use AI",
-                keywords: ["use","tool","application","prompt","generate","chatbot","prompting"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-34.jpg"
-            },
-            {
-                name: "DIY Agent with Zapier Agents",
-                type: "Task Card",
-                time: "30 minutes",
-                audience: ["Student"],
-                description: "Design an agent that handles birthdays for a teacher",
-                link: "https://docs.google.com/document/d/19JD2DBldUBDQ0SqASOtA8_7q5tE5XlNrRU9Zitv2SCA/edit",
-                category: "Shape AI",
-                keywords: ["shape","customize","train","model","agent"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-35.jpg"
-            },
-            {
-                name: "Fact checking AI",
-                type: "Facilitator Instructions",
-                time: "1 hour",
-                audience: ["Student"],
-                description: "In this lesson, we’ll introduce students to the skill of lateral reading (Wineburg & McGrew, 2017) as one approach to fact-checking the information they get from AI.",
-                link: "https://craft.stanford.edu/resource/how-do-i-fact-check-ai-search-results/",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact","fact-checking"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-36.jpg"
-            },
-            {
-                name: "Ethical AI use",
-                type: "Facilitator Instructions",
-                time: "1 hour",
-                audience: ["Student"],
-                description: "This gamified lesson effectively introduces students to the ethical challenges of AI. It boosts critical thinking and ethical reasoning through engaging discussions. It also enhances collaborative skills and decision-making, providing a rich learning experience.  AI & Society",
-                link: "https://craft.stanford.edu/resource/what-principles-should-guide-ethical-use-of-ai/",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-37.jpg"
-            },
-            {
-                name: "Bias in AI design",
-                type: "Facilitator Instructions",
-                time: "1 hour",
-                audience: ["Student"],
-                description: "This lesson introduces students to the concept of bias in AI training data and its societal implications. Using a real-world example of Google’s Gemini AI, students will explore how overrepresentation and underrepresentation in datasets affect various groups.",
-                link: "https://craft.stanford.edu/resource/how-can-we-mitigate-bias-in-ai-design/",
-                category: "Thoughtful AI",
-                keywords: ["critique","evaluate","bias","ethics","critical","impact"],
-                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-38.jpg"
-            }
-        ];
-
-        // State management
-        let state = {
-            userName: null,
-            affiliation: null,
-            onboardingStep: 'welcome',
-            currentActivity: null,
-            interests: [],
-            userPath: null, // 'activities' or 'launch'
-            conversationHistory: []
-        };
-
-        // Load state from localStorage
-        function loadState() {
-            const saved = localStorage.getItem('aiTinkeryState');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                state = { ...state, ...parsed };
-            }
-        }
-
-        // Save state to localStorage
-        function saveState() {
-            localStorage.setItem('aiTinkeryState', JSON.stringify(state));
-        }
-
-        // Initialize
-        const messagesContainer = document.getElementById('messages');
+        // Basic interaction
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
+        const conversation = document.getElementById('conversation');
+        const quickReplies = document.querySelectorAll('.quick-reply-btn');
+        const resetBtn = document.getElementById('resetBtn');
 
-        loadState();
-
-        // Add message to chat
-        // Split text into readable chunks
-        function splitIntoChunks(text) {
-            const chunks = [];
-            const sections = text.split(/\n\n+/);
-            
-            sections.forEach(section => {
-                section = section.trim();
-                if (!section) return;
-                
-                // Check if it's a list
-                const listItems = section.match(/^[-\d+\.].+$/gm);
-                if (listItems && listItems.length > 1) {
-                    // Group list items in chunks of 3
-                    for (let i = 0; i < listItems.length; i += 3) {
-                        chunks.push(listItems.slice(i, i + 3).join('\n'));
-                    }
-                } else {
-                    // Split long paragraphs
-                    if (section.length > 200) {
-                        const sentences = section.match(/[^.!?]+[.!?]+/g) || [section];
-                        let currentChunk = '';
-                        sentences.forEach(sentence => {
-                            if ((currentChunk + sentence).length > 200 && currentChunk) {
-                                chunks.push(currentChunk.trim());
-                                currentChunk = sentence;
-                            } else {
-                                currentChunk += sentence;
-                            }
-                        });
-                        if (currentChunk) chunks.push(currentChunk.trim());
-                    } else {
-                        chunks.push(section);
-                    }
-                }
+        // Quick reply handler
+        quickReplies.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const text = btn.textContent;
+                addUserMessage(text);
+                // Handle response (connect to Claude backend)
+                handleUserInput(text);
             });
-            
-            return chunks.length > 0 ? chunks : [text];
-        }
-
-        // Calculate reading delay
-        function getReadingDelay(text) {
-            const minDelay = 2000; // 2 seconds minimum
-            const maxDelay = 4000; // 4 seconds maximum
-            const words = text.split(/s+/).length;
-            const delay = words * 200; // 200ms per word // 250ms per word
-            return Math.min(Math.max(delay, minDelay), maxDelay);
-        }
-
-        // Format Claude's markdown responses
-        function formatMarkdown(text) {
-            return text
-                // Bold
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                // Bullet lists
-                .replace(/^- (.+)$/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-                // Numbered lists
-                .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
-                .replace(/(<li>.*<\/li>)/s, '<ol>$1</ol>')
-                // Line breaks
-                .replace(/\n/g, '<br/>');
-        }
-
-        function addMessage(content, isUser = false, includeAvatar = true) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
-            
-            if (includeAvatar) {
-                const avatar = document.createElement('div');
-                avatar.className = 'message-avatar';
-                if (isUser) {
-                    avatar.textContent = '👤';
-                } else {
-                    avatar.innerHTML = '<img src="data:image/jpeg;base64,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" alt="Robot" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
-                }
-                messageDiv.appendChild(avatar);
-            }
-
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'message-content';
-            
-            if (typeof content === 'string') {
-                // Format markdown if it's a bot message
-                const formatted = isUser ? content : `<p>${formatMarkdown(content)}</p>`;
-                contentDiv.innerHTML = formatted;
-            } else {
-                contentDiv.appendChild(content);
-            }
-            
-            messageDiv.appendChild(contentDiv);
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-            if (!isUser) {
-                state.conversationHistory.push({ type: 'bot', content: content.textContent || content });
-            } else {
-                state.conversationHistory.push({ type: 'user', content });
-            }
-            saveState();
-        }
-
-        // Show typing indicator
-        function showTyping() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot';
-            typingDiv.id = 'typing-indicator';
-            
-            const avatar = document.createElement('div');
-            avatar.className = 'message-avatar';
-            avatar.innerHTML = '<img src="data:image/jpeg;base64,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" alt="Robot" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />';
-            typingDiv.appendChild(avatar);
-
-            const indicator = document.createElement('div');
-            indicator.className = 'typing-indicator';
-            indicator.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-            typingDiv.appendChild(indicator);
-            
-            messagesContainer.appendChild(typingDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        function hideTyping() {
-            const typing = document.getElementById('typing-indicator');
-            if (typing) typing.remove();
-        }
-
-        // Add quick replies
-        function addQuickReplies(replies) {
-            const container = document.createElement('div');
-            container.className = 'quick-replies';
-            
-            replies.forEach(reply => {
-                const btn = document.createElement('button');
-                btn.className = 'quick-reply-btn';
-                btn.textContent = reply.text;
-                btn.onclick = () => {
-                    handleUserMessage(reply.value || reply.text);
-                    container.remove();
-                };
-                container.appendChild(btn);
-            });
-            
-            messagesContainer.appendChild(container);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
-
-        // Create activity card
-        const CATEGORY_STYLE = {
-            'Learn About AI':      { bg: '#e8f0fe', color: '#1a56db', emoji: '🧠' },
-            'Use AI':              { bg: '#dcfce7', color: '#16a34a', emoji: '💻' },
-            'Create With AI':      { bg: '#f3e8ff', color: '#7c3aed', emoji: '🎨' },
-            'Learn/Teach With AI': { bg: '#fff7ed', color: '#ea580c', emoji: '📚' },
-            'Shape AI':            { bg: '#ccfbf1', color: '#0f766e', emoji: '⚙️'  },
-            'Thoughtful AI':       { bg: '#fee2e2', color: '#dc2626', emoji: '💭' }
-        };
-
-        function createActivityCard(activity) {
-            const card = document.createElement('div');
-            card.className = 'activity-card';
-            card.onclick = () => handleActivityClick(activity);
-
-            const style = CATEGORY_STYLE[activity.category] || { bg: '#f1f5f9', color: '#475569', emoji: '✨' };
-
-            // Image with fallback placeholder
-            const imgWrapper = document.createElement('div');
-            imgWrapper.style.cssText = `width:100%;height:120px;border-radius:6px;margin-bottom:8px;overflow:hidden;`;
-
-            if (activity.image) {
-                const img = document.createElement('img');
-                img.src = activity.image;
-                img.alt = activity.name;
-                img.style.cssText = 'width:100%;height:120px;object-fit:cover;display:block;';
-                img.onerror = () => {
-                    imgWrapper.removeChild(img);
-                    imgWrapper.appendChild(makePlaceholder(style, activity.category));
-                };
-                imgWrapper.appendChild(img);
-            } else {
-                imgWrapper.appendChild(makePlaceholder(style, activity.category));
-            }
-
-            card.appendChild(imgWrapper);
-
-            card.innerHTML += `
-                <h4>${activity.name}</h4>
-                <p>${activity.description}</p>
-                <div class="activity-meta">
-                    <span>⏱ ${activity.time}</span>
-                    <span>👥 ${activity.audience.join(', ')}</span>
-                    <span>📂 ${activity.category}</span>
-                </div>
-            `;
-
-            return card;
-        }
-
-        function makePlaceholder(style, label) {
-            const ph = document.createElement('div');
-            ph.style.cssText = `width:100%;height:100%;background:${style.bg};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;`;
-            ph.innerHTML = `<span style="font-size:2rem;">${style.emoji}</span><span style="font-size:0.75rem;font-weight:600;color:${style.color};text-align:center;padding:0 8px;">${label}</span>`;
-            return ph;
-        }
-
-        // Handle activity click
-        function handleActivityClick(activity) {
-            state.currentActivity = activity;
-            saveState();
-            
-            setTimeout(() => {
-                showTyping();
-                setTimeout(() => {
-                    hideTyping();
-                    addMessage(`Great choice! Let's explore <strong>${activity.name}</strong>.`);
-                    
-                    setTimeout(() => {
-                        showTyping();
-                        setTimeout(() => {
-                            hideTyping();
-                            addMessage(`This activity is designed for <strong>${activity.audience.join(' and ')}</strong> and takes about <strong>${activity.time}</strong> to complete.`);
-                            
-                            setTimeout(() => {
-                                showTyping();
-                                setTimeout(() => {
-                                    hideTyping();
-                                    addMessage(`<strong>What you'll do:</strong> ${activity.description}`);
-                                    
-                                    setTimeout(() => {
-                                        showTyping();
-                                        setTimeout(() => {
-                                            hideTyping();
-                                            addMessage(`You can access the full activity guide here: <a href="${activity.link}" target="_blank" class="link">${activity.name} Activity Guide</a>`);
-                                            
-                                            setTimeout(() => {
-                                                addQuickReplies([
-                                                    { text: '🔍 Find another activity', value: 'show activities' },
-                                                    { text: '❓ Learn more about the Tinkery', value: 'tell me more' },
-                                                    { text: '🔄 Start over', value: 'restart' }
-                                                ]);
-                                            }, 800);
-                                        }, 1000);
-                                    }, 800);
-                                }, 1200);
-                            }, 800);
-                        }, 1200);
-                    }, 800);
-                }, 1500);
-            }, 500);
-        }
-
-        // NATURAL LANGUAGE UNDERSTANDING FUNCTIONS
-        
-        // Detect user intent from message
-        function detectIntent(message) {
-            const msg = message.toLowerCase().trim();
-            
-            // Question about specific topics
-            if (msg.includes('bias') || msg.includes('stereotype')) return { type: 'topic', topic: 'bias' };
-            if (msg.includes('image') || msg.includes('picture') || msg.includes('visual')) return { type: 'topic', topic: 'images' };
-            if (msg.includes('chatbot') || msg.includes('conversation')) return { type: 'topic', topic: 'chatbot' };
-            if (msg.includes('game') || msg.includes('play')) return { type: 'topic', topic: 'games' };
-            if (msg.includes('music') || msg.includes('audio') || msg.includes('sound')) return { type: 'topic', topic: 'music' };
-            if (msg.includes('video') || msg.includes('film')) return { type: 'topic', topic: 'video' };
-            if (msg.includes('math') || msg.includes('algorithm')) return { type: 'topic', topic: 'math' };
-            if (msg.includes('agent') || msg.includes('automation')) return { type: 'topic', topic: 'agents' };
-            if (msg.includes('prompt')) return { type: 'topic', topic: 'prompting' };
-            if (msg.includes('3d') || msg.includes('vr')) return { type: 'topic', topic: '3d' };
-            
-            // Duration questions
-            if (msg.match(/\d+\s*(min|hour|hr)/)) {
-                const match = msg.match(/(\d+)\s*(min|hour|hr)/);
-                return { type: 'duration', time: match[1], unit: match[2] };
-            }
-            
-            // Beginner/difficulty questions
-            if (msg.includes('beginner') || msg.includes('easy') || msg.includes('simple') || msg.includes('start')) return { type: 'difficulty', level: 'beginner' };
-            if (msg.includes('advanced') || msg.includes('hard') || msg.includes('complex')) return { type: 'difficulty', level: 'advanced' };
-            
-            // Audience questions
-            if (msg.includes('student') || msg.includes('kid') || msg.includes('child')) return { type: 'audience', group: 'students' };
-            if (msg.includes('teacher') || msg.includes('educator') || msg.includes('adult')) return { type: 'audience', group: 'teachers' };
-            
-            // Concept questions
-            if (msg.includes('curiosity board')) return { type: 'concept', name: 'curiosity-board' };
-            if (msg.includes('tinker time')) return { type: 'concept', name: 'tinker-time' };
-            if (msg.includes('working group')) return { type: 'concept', name: 'working-group' };
-            if (msg.includes('task card')) return { type: 'concept', name: 'task-card' };
-            if (msg.includes('principle') || msg.includes('guideline')) return { type: 'concept', name: 'principles' };
-            if (msg.includes('tinkering') || msg.includes('tinker')) return { type: 'concept', name: 'tinkering' };
-            
-            // Implementation questions
-            if (msg.includes('how to start') || msg.includes('how do i') || msg.includes('get started')) return { type: 'implementation', action: 'start' };
-            if (msg.includes('equipment') || msg.includes('materials') || msg.includes('need')) return { type: 'implementation', action: 'equipment' };
-            if (msg.includes('elementary') || msg.includes('primary') || msg.includes('age')) return { type: 'implementation', action: 'age' };
-            
-            return null;
-        }
-        
-        // Generate smart response based on detected intent
-        function generateSmartResponse(intent, originalMessage) {
-            if (intent.type === 'topic') {
-                const topicKeywords = {
-                    'bias': 'bias stereotypes ethics critical',
-                    'images': 'image picture visual art design',
-                    'chatbot': 'chatbot conversation prompt talk',
-                    'games': 'game play interactive fun',
-                    'music': 'music audio sound generation',
-                    'video': 'video film animation',
-                    'math': 'math algorithm computation',
-                    'agents': 'agent automation zapier workflow',
-                    'prompting': 'prompt meta prompting optimization',
-                    '3d': '3d vr virtual reality modeling'
-                };
-                
-                const keywords = topicKeywords[intent.topic] || intent.topic;
-                const recommended = recommendActivities(keywords);
-                
-                if (recommended.length > 0) {
-                    return {
-                        messages: [
-                            `Great question! Here are activities about <strong>${intent.topic}</strong>:`,
-                            ...recommended.map(createActivityCard),
-                            "Tap any activity to get started!"
-                        ],
-                        quickReplies: [
-                            { text: '🔍 Search another topic', value: 'show activities' },
-                            { text: '📚 About the Tinkery', value: 'tell me more' }
-                        ]
-                    };
-                }
-            }
-            
-            if (intent.type === 'duration') {
-                const targetMinutes = intent.unit.startsWith('hour') ? parseInt(intent.time) * 60 : parseInt(intent.time);
-                const filtered = ACTIVITIES.filter(a => {
-                    const timeStr = a.time.toLowerCase();
-                    if (timeStr.includes('hour')) {
-                        const hours = parseFloat(timeStr);
-                        return (hours * 60) <= (targetMinutes + 30);
-                    } else if (timeStr.includes('min')) {
-                        const mins = parseFloat(timeStr);
-                        return mins <= (targetMinutes + 15);
-                    }
-                    return true;
-                });
-                
-                if (filtered.length > 0) {
-                    const selection = filtered.slice(0, 3);
-                    return {
-                        messages: [
-                            `Here are activities that take about <strong>${intent.time} ${intent.unit}</strong> or less:`,
-                            ...selection.map(createActivityCard)
-                        ],
-                        quickReplies: [
-                            { text: '🔍 Different duration', value: 'show activities' },
-                            { text: '📚 Show all activities', value: 'all activities' }
-                        ]
-                    };
-                }
-            }
-            
-            if (intent.type === 'difficulty') {
-                if (intent.level === 'beginner') {
-                    const beginner = ACTIVITIES.filter(a => 
-                        a.time.includes('30') || a.audience.includes('Student')
-                    ).slice(0, 3);
-                    
-                    return {
-                        messages: [
-                            "Here are some <strong>beginner-friendly</strong> activities to get started:",
-                            ...beginner.map(createActivityCard),
-                            "These are great for first-timers!"
-                        ],
-                        quickReplies: [
-                            { text: '🔍 More activities', value: 'show activities' },
-                            { text: '📚 Learn about tinkering', value: 'tell me more' }
-                        ]
-                    };
-                }
-            }
-            
-            if (intent.type === 'audience') {
-                const audienceFilter = intent.group === 'students' ? 'Student' : 'Teacher';
-                const filtered = ACTIVITIES.filter(a => a.audience.includes(audienceFilter)).slice(0, 3);
-                
-                return {
-                    messages: [
-                        `Here are activities designed for <strong>${intent.group}</strong>:`,
-                        ...filtered.map(createActivityCard)
-                    ],
-                    quickReplies: [
-                        { text: '🔍 Search again', value: 'show activities' }
-                    ]
-                };
-            }
-            
-            if (intent.type === 'concept') {
-                const conceptResponses = {
-                    'curiosity-board': {
-                        messages: [
-                            "A <strong>Curiosity Board</strong> is a low-fi interactive display in a hallway or common area.",
-                            "It invites learners to <strong>play and tinker</strong> with AI concepts using QR codes, prompts, and physical materials.",
-                            "Think of it as a 'museum exhibit' that people can engage with at their own pace.",
-                            "Example: A poster with AI-generated images and sticky notes asking 'What do you notice? What feels missing?'"
-                        ],
-                        quickReplies: [
-                            { text: '📐 Other Tinkery formats', value: 'tinkery structure' },
-                            { text: '🎯 See activities', value: 'show activities' }
-                        ]
-                    },
-                    'tinker-time': {
-                        messages: [
-                            "<strong>Tinker Time</strong> is a structured workshop where participants play and tinker with AI.",
-                            "It's typically <strong>60-90 minutes</strong> and includes:",
-                            "• Warm-up activity",
-                            "• Hands-on tinkering",
-                            "• Group reflection",
-                            "Perfect for introducing new AI concepts in a collaborative setting."
-                        ],
-                        quickReplies: [
-                            { text: '📐 Other formats', value: 'tinkery structure' },
-                            { text: '🎯 Activities for Tinker Time', value: 'show activities' }
-                        ]
-                    },
-                    'working-group': {
-                        messages: [
-                            "A <strong>Working Group</strong> is a small cohort (3+ meetings) going deeper on a specific topic.",
-                            "Participants work on a <strong>shared project or question</strong> over multiple sessions.",
-                            "Example: 'Building Your Own AI Agent' — a 4-week series exploring automation tools."
-                        ],
-                        quickReplies: [
-                            { text: '📐 Other formats', value: 'tinkery structure' },
-                            { text: '👥 Who runs these?', value: 'tinkery roles' }
-                        ]
-                    },
-                    'task-card': {
-                        messages: [
-                            "A <strong>Task Card</strong> (or Play & Tinker Card) is a standalone activity guide.",
-                            "Each card includes:",
-                            "• Clear instructions",
-                            "• Time estimate",
-                            "• Reflection prompts",
-                            "Think of them as 'recipes' for hands-on AI learning."
-                        ],
-                        quickReplies: [
-                            { text: '🎯 See task cards', value: 'show activities' },
-                            { text: '📚 About the Tinkery', value: 'tell me more' }
-                        ]
-                    },
-                    'principles': {
-                        messages: [
-                            "The AI Tinkery is built on <strong>four guiding principles</strong>:",
-                            '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/guiding-principles.jpg" alt="4 Guiding Principles" style="width:100%;max-width:600px;border-radius:12px;margin:10px 0;">',
-                            "🤝 <strong>Collaborative</strong> — Learning through community dialogue",
-                            "❤️ <strong>Human-centered</strong> — Valuing multiple perspectives",
-                            "🔧 <strong>Applied</strong> — Trying, testing, and learning by doing",
-                            "💭 <strong>Thoughtful</strong> — Understanding AI as a system to be questioned and shaped"
-                        ],
-                        quickReplies: [
-                            { text: '🏫 Launch a Tinkery', value: 'path:launch' },
-                            { text: '🎯 See activities', value: 'show activities' }
-                        ]
-                    },
-                    'tinkering': {
-                        messages: [
-                            "<strong>Tinkering</strong> is a playful, iterative approach to learning.",
-                            '"Tinkering is not a new idea. From the time the earliest humans began making and using tools, tinkering has been a valuable strategy." (Resnick et al.)',
-                            '"But tinkering is more important today than ever before. We live in a world characterized by uncertainty and rapid change. Tinkerers understand how to improvise, adapt, and iterate." (Resnick)',
-                            "At the AI Tinkery, we apply this mindset to exploring AI — hands-on, collaboratively, and thoughtfully."
-                        ],
-                        quickReplies: [
-                            { text: '📐 Tinkery formats', value: 'tinkery structure' },
-                            { text: '🎯 Try an activity', value: 'show activities' }
-                        ]
-                    }
-                };
-                
-                return conceptResponses[intent.name] || null;
-            }
-            
-            if (intent.type === 'implementation') {
-                if (intent.action === 'start') {
-                    return {
-                        messages: [
-                            "Starting a Tinkery is simple:",
-                            "<strong>1. Pick one activity</strong> from our collection",
-                            "<strong>2. Try it</strong> with your learners",
-                            "<strong>3. Share</strong> what you learned using #AITinkery",
-                            "You can start with a single Curiosity Board in a hallway or a 30-minute Tinker Time session.",
-                            "No special equipment needed — just curiosity!"
-                        ],
-                        quickReplies: [
-                            { text: '🎯 Browse activities', value: 'show activities' },
-                            { text: '🏫 Launch guide', value: 'launch tinkery' }
-                        ]
-                    };
-                }
-                
-                if (intent.action === 'equipment') {
-                    return {
-                        messages: [
-                            "Most Tinkery activities need <strong>minimal equipment</strong>:",
-                            "• Device with internet access (phone, tablet, or computer)",
-                            "• Sticky notes and markers (for reflection)",
-                            "• Optional: Printer for task cards",
-                            "Many activities use <strong>free web tools</strong> — no special software required!"
-                        ],
-                        quickReplies: [
-                            { text: '🎯 See activities', value: 'show activities' },
-                            { text: '🚀 How to start', value: 'launch tinkery' }
-                        ]
-                    };
-                }
-                
-                if (intent.action === 'age') {
-                    return {
-                        messages: [
-                            "Yes! The Tinkery works for <strong>all ages</strong>.",
-                            "We have activities designed for:",
-                            "• Elementary students (with teacher guidance)",
-                            "• Middle & high school students (independent or collaborative)",
-                            "• Educators & adults (professional development)",
-                            "The key is choosing activities that match your learners' interests and independence level."
-                        ],
-                        quickReplies: [
-                            { text: '👶 Student activities', value: 'audience students' },
-                            { text: '👩‍🏫 Teacher activities', value: 'audience teachers' },
-                            { text: '🎯 See all', value: 'show activities' }
-                        ]
-                    };
-                }
-            }
-            
-            return null;
-        }
-        
-        // Recommend activities based on interests
-        function recommendActivities(interests) {
-            const interestWords = interests.toLowerCase().split(/\s+/);
-            
-            const scored = ACTIVITIES.map(activity => {
-                let score = 0;
-                interestWords.forEach(word => {
-                    if (activity.keywords.some(kw => kw.includes(word) || word.includes(kw))) {
-                        score += 3;
-                    }
-                    if (activity.name.toLowerCase().includes(word)) score += 2;
-                    if (activity.description.toLowerCase().includes(word)) score += 1;
-                    if (activity.category.toLowerCase().includes(word)) score += 2;
-                });
-                return { activity, score };
-            });
-
-            scored.sort((a, b) => b.score - a.score);
-            
-            const topActivities = scored.slice(0, 2).filter(s => s.score > 0);
-            
-            if (topActivities.length === 0) {
-                // Random selection if no matches
-                return ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 2);
-            }
-            
-            return topActivities.map(s => s.activity);
-        }
-
-        // Claude AI Integration
-        const CLAUDE_BACKEND_URL = '/api/claude';
-        
-        async function askClaude(userMessage) {
-            const history = state.conversationHistory || [];
-            
-            // Search activities to provide context to Claude
-            const msg = userMessage.toLowerCase();
-            const keywords = msg.split(/\s+/).filter(w => w.length > 3);
-            
-            // Find relevant activities
-            const relevantActivities = ACTIVITIES.map(activity => {
-                const searchText = `${activity.name} ${activity.description} ${activity.category}`.toLowerCase();
-                const matchCount = keywords.filter(keyword => searchText.includes(keyword)).length;
-                return { activity, score: matchCount };
-            })
-            .filter(item => item.score > 0)
-            .sort((a, b) => b.score - a.score)
-            .slice(0, 5)
-            .map(item => ({
-                name: item.activity.name,
-                time: item.activity.time,
-                type: item.activity.type,
-                description: item.activity.description,
-                category: item.activity.category
-            }));
-            
-            try {
-                const response = await fetch(CLAUDE_BACKEND_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify({
-                        message: userMessage,
-                        history: history.slice(-10),
-                        activities: relevantActivities
-                    }),
-                    redirect: 'follow'
-                });
-                
-                // Debug: Log response status
-                console.log('Response status:', response.status);
-                console.log('Response OK:', response.ok);
-                
-                const responseText = await response.text();
-                console.log('Raw response:', responseText);
-                
-                let data;
-                try {
-                    data = JSON.parse(responseText);
-                } catch (parseError) {
-                    console.error('JSON parse error:', parseError);
-                    console.error('Response was:', responseText);
-                    return null;
-                }
-                
-                console.log('Parsed data:', data);
-                
-                if (data.success) {
-                    if (!state.conversationHistory) {
-                        state.conversationHistory = [];
-                    }
-                    state.conversationHistory.push(
-                        { role: 'user', content: userMessage },
-                        { role: 'assistant', content: data.response }
-                    );
-                    saveState();
-                    
-                    return data.response;
-                } else {
-                    console.error('Claude error:', data.error);
-                    return null;
-                }
-            } catch (error) {
-                console.error('Failed to reach Claude:', error);
-                return null;
-            }
-        }
-
-        // Smart Quick Reply Generator
-        function generateSmartQuickReplies(userMessage, claudeResponse) {
-            const msg = userMessage.toLowerCase();
-            const response = claudeResponse.toLowerCase();
-            
-            // Base options that always make sense
-            const baseReplies = [];
-            
-            // Context-aware suggestions
-            if (response.includes('activity') || response.includes('recommend')) {
-                // Claude mentioned activities
-                baseReplies.push(
-                    { text: '🎯 Show all activities', value: 'show activities' },
-                    { text: '🔍 Filter by interest', value: 'interest:explore' }
-                );
-            } else if (response.includes('tinkery') || response.includes('launch') || response.includes('start')) {
-                // About launching a Tinkery
-                baseReplies.push(
-                    { text: '🏠 How to launch', value: 'launch tinkery' },
-                    { text: '👥 Roles needed', value: 'tinkery roles' }
-                );
-            } else if (response.includes('principle') || response.includes('philosophy') || response.includes('approach')) {
-                // About Tinkery values
-                baseReplies.push(
-                    { text: '📚 About the Tinkery', value: 'tell me more' },
-                    { text: '🎯 See activities', value: 'show activities' }
-                );
-            } else if (response.includes('bias') || response.includes('ethic') || response.includes('critical')) {
-                // Ethics/critical topics
-                baseReplies.push(
-                    { text: '⚖️ More on AI ethics', value: 'interest:ethics' },
-                    { text: '🔍 Explore activities', value: 'show activities' }
-                );
-            } else if (response.includes('beginner') || response.includes('start') || response.includes('first')) {
-                // Beginner-focused
-                baseReplies.push(
-                    { text: '🌱 Beginner activities', value: 'show activities' },
-                    { text: '💡 Learn the basics', value: 'tell me more' }
-                );
-            } else {
-                // Default options
-                baseReplies.push(
-                    { text: '🎯 Browse activities', value: 'show activities' },
-                    { text: '📚 About the Tinkery', value: 'tell me more' }
-                );
-            }
-            
-            // Always add "Ask another question" option
-            baseReplies.push(
-                { text: '❓ Ask another question', value: 'help' }
-            );
-            
-            return baseReplies.slice(0, 3); // Max 3 quick replies for clean UI
-        }
-
-        // Bot responses
-        async function botRespond(userMessage) {
-            const msg = userMessage.toLowerCase().trim();
-
-            // Onboarding flow
-            if (!state.userName || state.onboardingStep === 'affiliation' || state.onboardingStep === 'discover-path') {
-                if (state.onboardingStep === 'welcome') {
-                    state.onboardingStep = 'name';
-                    saveState();
-                    return {
-                        messages: ["What's your name?"],
-                        quickReplies: null
-                    };
-                } else if (state.onboardingStep === 'name') {
-                    state.userName = userMessage.trim();
-                    state.onboardingStep = 'affiliation';
-                    saveState();
-                    return {
-                        messages: [`Nice to meet you, ${state.userName}! 👋`, 
-                                   "What's your affiliation? (e.g., school, university, organization)"],
-                        quickReplies: null
-                    };
-                } else if (state.onboardingStep === 'affiliation') {
-                    state.affiliation = userMessage.trim();
-                    state.onboardingStep = 'discover-path';
-                    saveState();
-                    
-                    // Send user info via email
-                    sendUserInfoEmail(state.userName, state.affiliation);
-                    
-                    return {
-                        messages: [
-                            `Great! Thanks for sharing, ${state.userName} from ${state.affiliation}.`,
-                            "I'm here to help you explore the <strong>AI Tinkery</strong> — a space to play, tinker, and learn about AI in hands-on, creative ways.",
-                            "What brings you here today?"
-                        ],
-                        quickReplies: [
-                            { text: '🎯 Try hands-on AI activities', value: 'path:activities' },
-                            { text: '🏫 Start my own Tinkery', value: 'path:launch' },
-                            { text: '📚 Just learning about the Tinkery', value: 'tell me more' }
-                        ]
-                    };
-                } else if (state.onboardingStep === 'discover-path') {
-                    if (msg.includes('path:activities') || msg.includes('activities') || msg.includes('try')) {
-                        state.userPath = 'activities';
-                        state.onboardingStep = 'discover-interests';
-                        saveState();
-                        return {
-                            messages: [
-                                "Awesome! Let's find activities that match your interests.",
-                                "What aspects of AI are you most curious about?",
-                                '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/interest-map.jpg" alt="AI Learning Pathways" style="width:100%;max-width:600px;border-radius:12px;margin:10px 0;">'
-                            ],
-                            quickReplies: [
-                                { text: '🎨 Creating things with AI', value: 'interest:creating' },
-                                { text: '🧠 Understanding how AI works', value: 'interest:learning' },
-                                { text: '📚 Teaching with AI', value: 'interest:teaching' },
-                                { text: '⚖️ AI ethics & impact', value: 'interest:ethics' },
-                                { text: '🔧 Building AI systems', value: 'interest:building' },
-                                { text: '🤷 Not sure yet', value: 'interest:explore' }
-                            ]
-                        };
-                    } else if (msg.includes('path:launch') || msg.includes('start') || msg.includes('launch')) {
-                        state.userPath = 'launch';
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        return {
-                            messages: [
-                                "Fantastic! Starting your own Tinkery is an exciting journey.",
-                                "<strong>Why Tinkering?</strong>",
-                                "\"Tinkering is not a new idea. From the time the earliest humans began making and using tools, tinkering has been a valuable strategy for making things.\" (Resnick et al., \"Designing for Tinkerability\")",
-                                "\"But tinkering is more important today than ever before. We live in a world that is characterized by uncertainty and rapid change. ...Tinkerers understand how to improvise, adapt, and iterate, so they are never stuck on old plans as new situations arise.\" (Resnick et al.)",
-                                "The AI Tinkery model is designed to be <strong>flexible and replicable</strong> — you can adapt it to your context.",
-                                "At its core, a Tinkery is built on <strong>four guiding principles:</strong>",
-                                '<img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/guiding-principles.jpg" alt="4 Guiding Principles" style="width:100%;max-width:600px;border-radius:12px;margin:10px 0;">',
-                                "What would you like to explore?"
-                            ],
-                            quickReplies: [
-                                { text: '📐 Tinkery structure & formats', value: 'tinkery structure' },
-                                { text: '👥 Roles & people', value: 'tinkery roles' },
-                                { text: '🚀 How to launch', value: 'launch tinkery' },
-                                { text: '🎯 See example activities', value: 'show activities' }
-                            ]
-                        };
-                    }
-                } else if (state.onboardingStep === 'discover-interests') {
-                    if (msg.includes('interest:creating')) {
-                        state.interests.push('creating', 'building', 'making', 'design');
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const recommended = recommendActivities('creating building making design game image chatbot');
-                        return {
-                            messages: [
-                                "Perfect! You're interested in <strong>creating with AI</strong>.",
-                                "Here are some activities where you'll build and create:",
-                                ...recommended.map(createActivityCard),
-                                "Tap any activity to learn more and get started!"
-                            ],
-                            quickReplies: [
-                                { text: '🔍 Find more activities', value: 'show activities' },
-                                { text: '💡 Different interest', value: 'change interest' }
-                            ]
-                        };
-                    } else if (msg.includes('interest:learning')) {
-                        state.interests.push('learning', 'understanding', 'basics', 'concepts');
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const recommended = recommendActivities('learning understanding AI basics classification teachable machine');
-                        return {
-                            messages: [
-                                "Great choice! You want to <strong>understand how AI works</strong>.",
-                                "These activities will help you build conceptual understanding:",
-                                ...recommended.map(createActivityCard),
-                                "Tap any activity to dive in!"
-                            ],
-                            quickReplies: [
-                                { text: '🔍 Find more activities', value: 'show activities' },
-                                { text: '💡 Different interest', value: 'change interest' }
-                            ]
-                        };
-                    } else if (msg.includes('interest:teaching')) {
-                        state.interests.push('teaching', 'education', 'classroom', 'students');
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const recommended = recommendActivities('teaching education classroom instructional feedback assessment');
-                        return {
-                            messages: [
-                                "Excellent! You're interested in <strong>teaching with AI</strong>.",
-                                "Here are activities designed for educators:",
-                                ...recommended.map(createActivityCard),
-                                "Each one includes facilitation support and is ready for your classroom!"
-                            ],
-                            quickReplies: [
-                                { text: '🔍 Find more activities', value: 'show activities' },
-                                { text: '💡 Different interest', value: 'change interest' }
-                            ]
-                        };
-                    } else if (msg.includes('interest:ethics')) {
-                        state.interests.push('ethics', 'bias', 'critical', 'impact', 'sustainability');
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const recommended = recommendActivities('bias ethics critical stereotypes environment impact');
-                        return {
-                            messages: [
-                                "Important topic! You're interested in <strong>AI ethics and impact</strong>.",
-                                "These activities help you think critically about AI:",
-                                ...recommended.map(createActivityCard),
-                                "Each one encourages questioning, evaluating, and imagining alternatives."
-                            ],
-                            quickReplies: [
-                                { text: '🔍 Find more activities', value: 'show activities' },
-                                { text: '💡 Different interest', value: 'change interest' }
-                            ]
-                        };
-                    } else if (msg.includes('interest:building')) {
-                        state.interests.push('building', 'technical', 'agent', 'model', 'training');
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const recommended = recommendActivities('agent building technical model training machine learning zapier');
-                        return {
-                            messages: [
-                                "Awesome! You want to <strong>build AI systems</strong>.",
-                                "These activities let you create and shape AI:",
-                                ...recommended.map(createActivityCard),
-                                "Get hands-on with building!"
-                            ],
-                            quickReplies: [
-                                { text: '🔍 Find more activities', value: 'show activities' },
-                                { text: '💡 Different interest', value: 'change interest' }
-                            ]
-                        };
-                    } else if (msg.includes('interest:explore')) {
-                        state.onboardingStep = 'complete';
-                        saveState();
-                        const randomActivities = ACTIVITIES.sort(() => Math.random() - 0.5).slice(0, 4);
-                        return {
-                            messages: [
-                                "No problem! Let's explore a variety of activities:",
-                                ...randomActivities.map(createActivityCard),
-                                "Browse around and see what catches your eye!"
-                            ],
-                            quickReplies: [
-                                { text: '🔄 Show me more', value: 'all activities' },
-                                { text: '💡 I know my interest now', value: 'change interest' }
-                            ]
-                        };
-                    }
-                }
-            }
-
-            // Restart
-            if (msg.includes('restart') || msg.includes('reset') || msg.includes('start over') || msg.includes('new user')) {
-                return {
-                    messages: ["Starting fresh! I'll clear the conversation and you can begin again."],
-                    quickReplies: [
-                        { text: '✅ Yes, start over', value: 'confirm-reset' },
-                        { text: '❌ Cancel', value: 'cancel' }
-                    ]
-                };
-            }
-
-            if (msg.includes('confirm-reset')) {
-                localStorage.removeItem('aiTinkeryState');
-                location.reload();
-                return { messages: [], quickReplies: null };
-            }
-
-            // Claude handles everything — activity cards are appended automatically
-            const claudeResponse = await askClaude(userMessage);
-            if (claudeResponse) {
-                const activityCards = extractMatchedActivities(claudeResponse, userMessage);
-                const quickReplies = generateSmartQuickReplies(userMessage, claudeResponse);
-                return {
-                    messages: [claudeResponse, ...activityCards.map(createActivityCard)],
-                    quickReplies
-                };
-            }
-
-            // Fallback if Claude is unreachable
-            return {
-                messages: [
-                    "I'm having trouble connecting right now. Try asking me about AI activities, the Tinkery, or how to get started."
-                ],
-                quickReplies: [
-                    { text: '🎯 Explore activities', value: 'show me some activities' },
-                    { text: '📚 About the Tinkery', value: 'what is the AI Tinkery?' },
-                    { text: '❓ Help', value: 'what can you help with?' }
-                ]
-            };
-        }
-
-        // Scan Claude's response and user message to find relevant activity cards to display
-        function extractMatchedActivities(claudeResponse, userMessage) {
-            const responseText = claudeResponse.toLowerCase();
-            const userText = userMessage.toLowerCase();
-
-            // 1. Exact activity name mentions in Claude's response
-            const byName = ACTIVITIES.filter(a =>
-                responseText.includes(a.name.toLowerCase())
-            );
-            if (byName.length > 0) {
-                return byName.slice(0, 5);
-            }
-
-            // 2. Keyword-based matching, but only when the conversation is about activities
-            const activityRelated =
-                responseText.includes('activit') ||
-                responseText.includes('recommend') ||
-                responseText.includes('suggest') ||
-                responseText.includes('try this') ||
-                responseText.includes('check out') ||
-                userText.includes('activit') ||
-                userText.includes('recommend') ||
-                userText.includes('suggest') ||
-                userText.includes('what should i') ||
-                userText.includes('what can i');
-
-            if (activityRelated) {
-                return recommendActivities(userMessage).slice(0, 5);
-            }
-
-            return [];
-        }
-
-        // Handle user message
-        function handleUserMessage(message) {
-            if (!message || message.trim() === '') return;
-
-            // Add user message
-            addMessage(message, true);
-            userInput.value = '';
-
-            // Show typing
-            showTyping();
-
-            // Get bot response
-            setTimeout(async () => {
-                hideTyping();
-                const response = await botRespond(message);
-                
-                let totalDelay = 0;
-                const hasQuickReplies = response.quickReplies;
-                const allMessages = [];
-                
-                // Process messages into chunks
-                response.messages.forEach((msg) => {
-                    if (typeof msg === 'string') {
-                        const chunks = splitIntoChunks(msg);
-                        chunks.forEach(chunk => {
-                            allMessages.push({type: 'text', content: chunk});
-                        });
-                    } else {
-                        allMessages.push({type: 'card', content: msg});
-                    }
-                });
-                
-                // Display messages with delays
-                allMessages.forEach((item, index) => {
-                    setTimeout(() => {
-                        if (item.type === 'text') {
-                            showTyping();
-                            setTimeout(() => {
-                                hideTyping();
-                                addMessage(item.content);
-                            }, 800);
-                        } else {
-                            addMessage(item.content);
-                        }
-                        
-                        // Add quick replies after last message
-                        if (index === allMessages.length - 1 && hasQuickReplies) {
-                            setTimeout(() => {
-                                addQuickReplies(response.quickReplies);
-                            }, 1000);
-                        }
-                    }, totalDelay);
-                    
-                    // Calculate next delay (minimum 5 seconds)
-                    if (item.type === 'text') {
-                        totalDelay += 800 + getReadingDelay(item.content);
-                    } else {
-                        totalDelay += 500;
-                    }
-                });
-            }, 1000);
-        }
-
-        // Send user info via email
-        async function sendUserInfoEmail(name, affiliation) {
-            try {
-                const timestamp = new Date().toLocaleString();
-                
-                // Using Google Apps Script Web App endpoint
-                // Replace YOUR_GOOGLE_APPS_SCRIPT_URL_HERE with deployed script URL
-                const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-                
-                const response = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: name,
-                        affiliation: affiliation,
-                        timestamp: timestamp
-                    })
-                });
-                
-                console.log('User info sent:', name, affiliation);
-            } catch (error) {
-                console.error('Failed to send user info:', error);
-            }
-        }
-
-        // Event listeners
-        sendBtn.addEventListener('click', () => {
-            handleUserMessage(userInput.value);
         });
 
+        // Send button
+        sendBtn.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleUserMessage(userInput.value);
-            }
+            if (e.key === 'Enter') sendMessage();
         });
 
-        // Reset button
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            if (confirm('Start over with a new user? This will clear the current conversation.')) {
-                localStorage.removeItem('aiTinkeryState');
-                location.reload();
-            }
+        // Reset
+        resetBtn.addEventListener('click', () => {
+            conversation.innerHTML = '';
+            userInput.value = '';
         });
 
-        // Initial greeting
-        window.addEventListener('load', () => {
-            if (!state.userName) {
-                setTimeout(() => {
-                    addMessage("👋 Hi there! Welcome to the <strong>AI Tinkery</strong> at Stanford.");
-                    setTimeout(() => {
-                        showTyping();
-                        setTimeout(() => {
-                            hideTyping();
-                            addMessage("We're a space to play, tinker, and learn about AI in hands-on, creative ways.");
-                            setTimeout(() => {
-                                showTyping();
-                                setTimeout(() => {
-                                    hideTyping();
-                                    addMessage("Before we get started, I'd love to get to know you!");
-                                    setTimeout(() => {
-                                        handleUserMessage('start');
-                                    }, 1000);
-                                }, 1200);
-                            }, 800);
-                        }, 1500);
-                    }, 1000);
-                }, 500);
-            } else {
-                addMessage(`Welcome back, ${state.userName} from ${state.affiliation}! 👋`);
-                setTimeout(() => {
-                    addMessage("What would you like to do?");
-                    setTimeout(() => {
-                        addQuickReplies([
-                            { text: '🎯 Explore activities', value: 'path:activities' },
-                            { text: '🏫 Launch a Tinkery', value: 'path:launch' },
-                            { text: '📚 About the Tinkery', value: 'tell me more' }
-                        ]);
-                    }, 800);
-                }, 1000);
-            }
-        });
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js');
-            });
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            addUserMessage(text);
+            userInput.value = '';
+            handleUserInput(text);
+        }
+
+        function addUserMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'message user';
+            msg.innerHTML = `<p>${text}</p>`;
+            conversation.appendChild(msg);
+            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function addBotMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = `<p>${text}</p>`;
+            conversation.appendChild(msg);
+            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function handleUserInput(text) {
+            // Placeholder - connect to Claude backend
+            setTimeout(() => {
+                addBotMessage('This is a placeholder response. Connect to Claude backend for real responses.');
+            }, 500);
         }
     </script>
 </body>
