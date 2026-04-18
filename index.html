@@ -894,12 +894,70 @@
             scrollToBottom();
         }
 
+        // Split text into readable chunks
+        function splitIntoChunks(text) {
+            const chunks = [];
+            const sections = text.split(/\n\n+/);
+            
+            sections.forEach(section => {
+                section = section.trim();
+                if (!section) return;
+                
+                // Check if it's a list
+                const listItems = section.match(/^[-\d+\.].+$/gm);
+                if (listItems && listItems.length > 1) {
+                    // Group list items in chunks of 3
+                    for (let i = 0; i < listItems.length; i += 3) {
+                        chunks.push(listItems.slice(i, i + 3).join('\n'));
+                    }
+                } else {
+                    // Split long paragraphs
+                    if (section.length > 200) {
+                        const sentences = section.match(/[^.!?]+[.!?]+/g) || [section];
+                        let currentChunk = '';
+                        sentences.forEach(sentence => {
+                            if ((currentChunk + sentence).length > 200 && currentChunk) {
+                                chunks.push(currentChunk.trim());
+                                currentChunk = sentence;
+                            } else {
+                                currentChunk += sentence;
+                            }
+                        });
+                        if (currentChunk) chunks.push(currentChunk.trim());
+                    } else {
+                        chunks.push(section);
+                    }
+                }
+            });
+            
+            return chunks.length > 0 ? chunks : [text];
+        }
+
+        // Calculate reading delay based on word count
+        function getReadingDelay(text) {
+            const minDelay = 2000; // 2 seconds minimum
+            const maxDelay = 4000; // 4 seconds maximum
+            const words = text.split(/\s+/).length;
+            const delay = words * 200; // 200ms per word
+            return Math.min(Math.max(delay, minDelay), maxDelay);
+        }
+
+        // Add bot message with progressive chunking
         function addBotMessage(text) {
-            const msg = document.createElement('div');
-            msg.className = 'message bot';
-            msg.innerHTML = formatMarkdown(text);
-            conversation.appendChild(msg);
-            scrollToBottom();
+            const chunks = splitIntoChunks(text);
+            let delay = 0;
+
+            chunks.forEach((chunk, index) => {
+                setTimeout(() => {
+                    const msg = document.createElement('div');
+                    msg.className = 'message bot';
+                    msg.innerHTML = formatMarkdown(chunk);
+                    conversation.appendChild(msg);
+                    scrollToBottom();
+                }, delay);
+
+                delay += getReadingDelay(chunk);
+            });
         }
 
         function scrollToBottom() {
