@@ -847,11 +847,43 @@
         const userInput = document.getElementById('userInput');
         const sendBtn = document.getElementById('sendBtn');
         const conversation = document.getElementById('conversation');
-        const quickReplies = document.querySelectorAll('.quick-reply-btn');
+        const staticQuickReplies = document.getElementById('quickReplies');
+        const heroSection = document.querySelector('.hero');
         const resetBtn = document.getElementById('resetBtn');
 
-        // Quick reply handler
-        quickReplies.forEach(btn => {
+        // Follow-up quick replies shown after every bot response
+        const FOLLOW_UP_REPLIES = [
+            'Show me activities',
+            'What should I try first?',
+            'Tell me more',
+            'How do I start a Tinkery?',
+            'What else can I explore?'
+        ];
+
+        function addDynamicQuickReplies() {
+            const container = document.createElement('div');
+            container.className = 'quick-replies';
+            FOLLOW_UP_REPLIES.forEach(text => {
+                const btn = document.createElement('button');
+                btn.className = 'quick-reply-btn';
+                btn.textContent = text;
+                btn.addEventListener('click', () => {
+                    addUserMessage(text);
+                    handleUserInput(text);
+                });
+                container.appendChild(btn);
+            });
+            conversation.appendChild(container);
+            scrollToBottom();
+        }
+
+        function enterChatMode() {
+            heroSection.style.display = 'none';
+            staticQuickReplies.style.display = 'none';
+        }
+
+        // Quick reply handler (initial static buttons)
+        document.querySelectorAll('#quickReplies .quick-reply-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const text = btn.textContent;
                 addUserMessage(text);
@@ -868,15 +900,17 @@
             }
         });
 
-        // Reset
+        // Reset — show hero + static quick replies again
         resetBtn.addEventListener('click', () => {
             if (confirm('Clear conversation?')) {
                 conversationHistory = [];
                 conversation.innerHTML = '';
                 userInput.value = '';
                 localStorage.removeItem('aiTinkeryState');
+                heroSection.style.display = '';
+                staticQuickReplies.style.display = '';
             }
-        });;
+        });
 
         function sendMessage() {
             const text = userInput.value.trim();
@@ -888,6 +922,8 @@
         }
 
         function addUserMessage(text) {
+            enterChatMode();
+            conversation.innerHTML = '';
             const msg = document.createElement('div');
             msg.className = 'message user';
             msg.innerHTML = `<p>${escapeHtml(text)}</p>`;
@@ -955,6 +991,11 @@
                     msg.innerHTML = formatMarkdown(chunk);
                     conversation.appendChild(msg);
                     scrollToBottom();
+
+                    // After the last chunk, add follow-up quick replies
+                    if (index === chunks.length - 1) {
+                        setTimeout(() => addDynamicQuickReplies(), 300);
+                    }
                 }, delay);
 
                 delay += getReadingDelay(chunk);
