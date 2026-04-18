@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tinkery | Stanford</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f7f7f7;
+            color: #191d19;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            padding: 24px 40px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 119px;
+            height: 119px;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .title-text {
+            font-family: 'Bungee', cursive;
+            font-size: 36px;
+            color: #c7520a;
+            font-weight: bold;
+        }
+
+        .stanford-logo img {
+            height: 50px;
+            max-width: 300px;
+            object-fit: contain;
+        }
+
+        .reset-btn {
+            background: #51c0e2;
+            border: 2px solid #51c0e2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .reset-btn:hover {
+            background: #3aa8d8;
+            border-color: #3aa8d8;
+        }
+
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 40px 200px 40px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 24px 0 40px 0;
+        }
+
+        .hero h1 {
+            font-family: 'Bungee', cursive;
+            font-size: 64px;
+            line-height: 1.1;
+            color: #191d19;
+            margin-bottom: 10px;
+        }
+
+        .hero h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #191d19;
+            margin-bottom: 24px;
+        }
+
+        .hero-content {
+            color: #474747;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .hero-content p {
+            margin-bottom: 20px;
+        }
+
+        .hero-content strong {
+            color: #191d19;
+            font-weight: 600;
+        }
+
+        /* Quick Replies */
+        .quick-replies {
+            margin: 32px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .quick-reply-btn {
+            background: #222222;
+            color: white;
+            border: 1px solid #222222;
+            padding: 10px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-weight: 400;
+        }
+
+        .quick-reply-btn:hover {
+            background: #333333;
+            border-color: #333333;
+        }
+
+        /* Conversation Area */
+        .conversation {
+            margin-top: 40px;
+        }
+
+        .message {
+            margin-bottom: 24px;
+            max-width: 100%;
+        }
+
+        .message.bot {
+            color: #191d19;
+        }
+
+        .message.user {
+            color: #51c0e2;
+            font-weight: 600;
+            margin-left: 40px;
+        }
+
+        .message p {
+            margin-bottom: 12px;
+        }
+
+        /* Input Container */
+        .input-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(247, 247, 247, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 20px;
+            border-top: 1px solid rgba(26, 26, 26, 0.1);
+        }
+
+        .input-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 9999px;
+            border: 1px solid #d0d0d0;
+            padding: 12px 12px 12px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        #userInput {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #222222;
+            background: transparent;
+            font-family: 'Source Sans 3', sans-serif;
+        }
+
+        #userInput::placeholder {
+            color: #adadad;
+        }
+
+        .send-btn {
+            background: #51c0e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.2s;
+            margin-left: 8px;
+        }
+
+        .send-btn:hover {
+            background: #3aa8d8;
+        }
+
+        .send-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/robot-logo.jpg" alt="AI Tinkery Robot">
+                </div>
+                <div class="title-text">AI Tinkery</div>
+            </div>
+            <div class="stanford-logo">
+                <img src="https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/images/stanford-logo.jpg" alt="Stanford Accelerator for Learning">
+            </div>
+            <button class="reset-btn" id="resetBtn">New User</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section (Static) -->
+        <section class="hero">
+            <h1>Hi! I'm your AI Tinkery guide</h1>
+            <h2>Here to help you explore hands-on AI learning at Stanford</h2>
+            <div class="hero-content">
+                <p>At the <strong>AI Tinkery</strong>, we believe learning should feel <strong>personal</strong>—not templated. That's why we built this as a <strong>conversation</strong>, not a brochure.</p>
+                <p>Most people want to learn AI but don't know where to start. The AI Tinkery helps you <strong>discover activities that match your interests</strong>, <strong>explore hands-on projects</strong>, and <strong>decide</strong> what to try first.</p>
+                <p>Tell me what brings you here, and I'll keep it relevant.</p>
+            </div>
+        </section>
+
+        <!-- Quick Replies -->
+        <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply-btn">I want to explore activities</button>
+            <button class="quick-reply-btn">Tell me about the Tinkery</button>
+            <button class="quick-reply-btn">I need clarity on AI tools</button>
+            <button class="quick-reply-btn">What should I try first?</button>
+            <button class="quick-reply-btn">Launch my own Tinkery</button>
+            <button class="quick-reply-btn">Just exploring</button>
+        </div>
+
+        <!-- Conversation Area -->
+        <div class="conversation" id="conversation"></div>
+    </main>
+
+    <!-- Input Area -->
+    <div class="input-wrapper">
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="userInput" 
+                placeholder="What do you want to know about the AI Tinkery? Type your questions here..."
+                maxlength="500"
+            >
+            <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Basic interaction
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const conversation = document.getElementById('conversation');
+        const quickReplies = document.querySelectorAll('.quick-reply-btn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Quick reply handler
+        quickReplies.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const text = btn.textContent;
+                addUserMessage(text);
+                // Handle response (connect to Claude backend)
+                handleUserInput(text);
+            });
+        });
+
+        // Send button
+        sendBtn.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Reset
+        resetBtn.addEventListener('click', () => {
+            conversation.innerHTML = '';
+            userInput.value = '';
+        });
+
+        function sendMessage() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            addUserMessage(text);
+            userInput.value = '';
+            handleUserInput(text);
+        }
+
+        function addUserMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'message user';
+            msg.innerHTML = `<p>${text}</p>`;
+            conversation.appendChild(msg);
+            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function addBotMessage(text) {
+            const msg = document.createElement('div');
+            msg.className = 'message bot';
+            msg.innerHTML = `<p>${text}</p>`;
+            conversation.appendChild(msg);
+            conversation.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function handleUserInput(text) {
+            // Placeholder - connect to Claude backend
+            setTimeout(() => {
+                addBotMessage('This is a placeholder response. Connect to Claude backend for real responses.');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
