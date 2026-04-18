@@ -702,7 +702,16 @@
             },
             {
                 name: "Ethical AI use",
-
+                type: "Facilitator Instructions",
+                time: "1 hour",
+                audience: ["Student"],
+                description: "Explore ethical considerations around AI use, including issues of bias, fairness, privacy, and responsible deployment of AI systems.",
+                link: "https://craft.stanford.edu/resource/",
+                category: "Thoughtful AI",
+                keywords: ["ethics","responsible","bias","fairness","privacy","impact","thoughtful"],
+                image: "https://raw.githubusercontent.com/aitinkery/ai-tinkery-chatbot/main/activity-images/activity-37.jpg"
+            }
+        ];
 
         // Activity Card Styling
         const activityCardStyle = `
@@ -1088,45 +1097,6 @@
                 handleUserInput(`I'm interested in exploring hands-on AI activities. What categories are available?`);
             } else {
                 handleUserInput(`I want to learn about launching my own AI Tinkery. Where should I start?`);
-            }
-        }
-
-            } catch (error) {
-                console.error('Error:', error);
-                addBotMessage('Sorry, I encountered an error. Please try again.');
-            } finally {
-                // Re-enable input
-                sendBtn.disabled = false;
-                userInput.disabled = false;
-                userInput.focus();
-            }
-        },
-                    body: JSON.stringify({
-                        message: userMessage,
-                        conversationHistory: conversationHistory
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.response) {
-                    addBotMessage(data.response);
-                    conversationHistory.push({
-                        role: 'assistant',
-                        content: data.response
-                    });
-                } else {
-                    throw new Error('No response from backend');
-                }
-
-            } catch (error) {
-                console.error('Error:', error);
-                addBotMessage('Sorry, I encountered an error. Please try again.');
-            } finally {
-                // Re-enable input
-                sendBtn.disabled = false;
-                userInput.disabled = false;
-                userInput.focus();
             }
         }
 
