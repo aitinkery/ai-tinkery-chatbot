@@ -980,8 +980,8 @@
             return Math.min(Math.max(delay, minDelay), maxDelay);
         }
 
-        // Add bot message with progressive chunking
-        function addBotMessage(text, suggestions) {
+        // Add bot message with progressive chunking; calls onComplete after all chunks appear
+        function addBotMessage(text, suggestions, onComplete) {
             const chunks = splitIntoChunks(text);
             let delay = 0;
 
@@ -993,9 +993,12 @@
                     conversation.appendChild(msg);
                     scrollToBottom();
 
-                    // After the last chunk, add follow-up quick replies
                     if (index === chunks.length - 1) {
-                        setTimeout(() => addDynamicQuickReplies(suggestions), 300);
+                        // After last chunk: run optional callback (e.g. activity cards), then quick replies
+                        setTimeout(() => {
+                            if (onComplete) onComplete();
+                            setTimeout(() => addDynamicQuickReplies(suggestions), 300);
+                        }, 300);
                     }
                 }, delay);
 
@@ -1064,17 +1067,15 @@
                 
                 if (data.response) {
                     const { text: cleanResponse, suggestions } = parseSuggestions(data.response);
-                    addBotMessage(cleanResponse, suggestions);
                     conversationHistory.push({
                         role: 'assistant',
                         content: cleanResponse
                     });
 
-                    // Check if activities should be shown
+                    // Activity cards (if any) appear after bot text, before quick replies
                     const activities = extractActivitiesFromResponse(cleanResponse);
-                    if (activities.length > 0) {
-                        showActivities(activities);
-                    }
+                    const onComplete = activities.length > 0 ? () => showActivities(activities) : null;
+                    addBotMessage(cleanResponse, suggestions, onComplete);
                 } else {
                     throw new Error('No response from backend');
                 }
