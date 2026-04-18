@@ -973,10 +973,10 @@
 
         // Calculate reading delay based on word count
         function getReadingDelay(text) {
-            const minDelay = 2000; // 2 seconds minimum
-            const maxDelay = 4000; // 4 seconds maximum
+            const minDelay = 800; // 0.8 seconds minimum
+            const maxDelay = 2000; // 2 seconds maximum
             const words = text.split(/\s+/).length;
-            const delay = words * 200; // 200ms per word
+            const delay = words * 80; // 80ms per word
             return Math.min(Math.max(delay, minDelay), maxDelay);
         }
 
