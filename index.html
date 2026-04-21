@@ -255,6 +255,97 @@
             cursor: not-allowed;
         }
 
+        /* Activity Cards */
+        .activity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin: 16px 0;
+        }
+
+        .activity-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(199, 82, 10, 0.2);
+            border-radius: 14px;
+            padding: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-card:hover {
+            border-color: rgba(199, 82, 10, 0.6);
+            box-shadow: 0 4px 12px rgba(199, 82, 10, 0.15);
+        }
+
+        .activity-card .img-wrap {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #f0eee9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-card .img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .activity-card h3 {
+            color: #191d19;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            line-height: 1.25;
+        }
+
+        .activity-card p {
+            color: #474747;
+            font-size: 13px;
+            line-height: 1.45;
+            margin-bottom: 10px;
+            flex: 1;
+        }
+
+        .activity-card .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: #787878;
+        }
+
+        .activity-card .btn {
+            display: inline-block;
+            background: #c7520a;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 12px;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .activity-card .btn:hover {
+            background: #a34308;
+        }
+
+        @media (max-width: 480px) {
+            .activity-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+        }
+
         /* Safe area insets for notched phones (iPhone X+) */
         .input-wrapper {
             padding-bottom: max(20px, env(safe-area-inset-bottom));
@@ -808,107 +899,49 @@
             }
         ];
 
-        // Activity Card Styling
-        const activityCardStyle = `
-            <style>
-                .activity-card {
-                    background: rgba(255, 255, 255, 0.95);
-                    border: 1px solid rgba(199, 82, 10, 0.2);
-                    border-radius: 16px;
-                    padding: 20px;
-                    margin: 16px 0;
-                    transition: all 0.2s;
-                }
-                .activity-card:hover {
-                    border-color: rgba(199, 82, 10, 0.6);
-                    box-shadow: 0 4px 12px rgba(199, 82, 10, 0.15);
-                }
-                .activity-card img {
-                    width: 100%;
-                    height: 200px;
-                    object-fit: cover;
-                    border-radius: 12px;
-                    margin-bottom: 12px;
-                }
-                .activity-card h3 {
-                    color: #191d19;
-                    font-size: 20px;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                }
-                .activity-card p {
-                    color: #474747;
-                    font-size: 15px;
-                    line-height: 1.5;
-                    margin-bottom: 12px;
-                }
-                .activity-card .meta {
-                    display: flex;
-                    gap: 12px;
-                    margin-bottom: 12px;
-                    font-size: 13px;
-                    color: #787878;
-                }
-                .activity-card .btn {
-                    display: inline-block;
-                    background: #c7520a;
-                    color: white;
-                    padding: 10px 20px;
-                    border-radius: 9999px;
-                    text-decoration: none;
-                    font-weight: 600;
-                    font-size: 14px;
-                    transition: background 0.2s;
-                }
-                .activity-card .btn:hover {
-                    background: #a34308;
-                }
-            </style>
-        `;
-
-        // Add styles to document
-        if (!document.querySelector('#activity-styles')) {
-            const styleEl = document.createElement('div');
-            styleEl.id = 'activity-styles';
-            styleEl.innerHTML = activityCardStyle;
-            document.head.appendChild(styleEl);
-        }
-
-        // Create activity card HTML
+        // Create activity card HTML (image uses contain + aspect box so full image shows)
         function createActivityCard(activity) {
+            const name = escapeHtml(activity.name);
+            const desc = escapeHtml(activity.description);
+            const time = escapeHtml(activity.time);
+            const audience = escapeHtml(activity.audience.join(', '));
             return `
                 <div class="activity-card">
-                    <img src="${activity.image}" alt="${activity.name}">
-                    <h3>${activity.name}</h3>
-                    <div class="meta">
-                        <span>⏱️ ${activity.time}</span>
-                        <span>👥 ${activity.audience.join(', ')}</span>
+                    <div class="img-wrap">
+                        <img src="${activity.image}" alt="${name}" loading="lazy">
                     </div>
-                    <p>${activity.description}</p>
-                    <a href="${activity.link}" target="_blank" class="btn">Explore Activity →</a>
+                    <h3>${name}</h3>
+                    <div class="meta">
+                        <span aria-label="Duration">⏱️ ${time}</span>
+                        <span aria-label="Audience">👥 ${audience}</span>
+                    </div>
+                    <p>${desc}</p>
+                    <a href="${activity.link}" target="_blank" rel="noopener" class="btn" aria-label="Explore ${name}">Explore Activity →</a>
                 </div>
             `;
         }
 
-        // Function to display activity cards
+        // Display activity cards in a responsive grid
         function showActivities(activityList) {
-            const cardsHtml = activityList.map(a => createActivityCard(a)).join('');
+            const cardsHtml = activityList.map(createActivityCard).join('');
             const msg = document.createElement('div');
             msg.className = 'message bot';
-            msg.innerHTML = cardsHtml;
+            msg.innerHTML = `<div class="activity-grid">${cardsHtml}</div>`;
             conversation.appendChild(msg);
             scrollToBottom();
         }
 
-        // Match activities from response
+        // Match activities mentioned in a response (case-insensitive, max 2)
         function extractActivitiesFromResponse(responseText) {
+            const lower = responseText.toLowerCase();
             const mentioned = [];
-            ACTIVITIES.forEach(activity => {
-                if (responseText.toLowerCase().includes(activity.name.toLowerCase())) {
+            for (const activity of ACTIVITIES) {
+                if (lower.includes(activity.name.toLowerCase())) {
                     mentioned.push(activity);
+                    if (mentioned.length >= 2) break;
                 }
-            });
-            return mentioned.slice(0, 2); // Max 2 activities
+            }
+            return mentioned;
         }
 
                 // State management
@@ -978,18 +1011,19 @@
             staticQuickReplies.style.display = 'none';
         }
 
-        // Quick reply handler (initial static buttons)
-        document.querySelectorAll('#quickReplies .quick-reply-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const text = btn.textContent;
-                addUserMessage(text);
-                handleUserInput(text);
-            });
+        // Quick replies: use event delegation on the container
+        const quickRepliesContainer = document.getElementById('quickReplies');
+        quickRepliesContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('.quick-reply-btn');
+            if (!btn) return;
+            const text = btn.textContent;
+            addUserMessage(text);
+            handleUserInput(text);
         });
 
-        // Send button
+        // Send button / Enter key
         sendBtn.addEventListener('click', sendMessage);
-        userInput.addEventListener('keypress', (e) => {
+        userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
