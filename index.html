@@ -982,10 +982,10 @@
         // Follow-up quick replies shown after every bot response
         const FOLLOW_UP_REPLIES = [
             'Show me activities',
-            'What should I try first?',
+            'Show me where to start',
             'Tell me more',
-            'How do I start a Tinkery?',
-            'What else can I explore?'
+            'Help me start a Tinkery',
+            'Show me what to explore'
         ];
 
         function addDynamicQuickReplies(suggestions) {
@@ -1178,7 +1178,7 @@
 
                 // Append a hidden instruction so Claude returns smart follow-up suggestions
                 const messageWithInstruction = userMessage +
-                    '\n\n[After your response add one line in this exact format — SUGGESTIONS: question1 | question2 | question3 — with 3 short follow-up questions (under 8 words each) the user might ask next. Do not explain this line.]';
+                    '\n\n[After your response add one line in this exact format — SUGGESTIONS: statement1 | statement2 | statement3 — with 3 short first-person action statements (under 8 words each, no question marks) the user might select next, e.g. "Show me beginner activities" or "Tell me how to start a Tinkery". Do not explain this line.]';
 
                 // Call Claude backend
                 const response = await fetch(CLAUDE_BACKEND_URL, {
