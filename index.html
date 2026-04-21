@@ -196,6 +196,14 @@
         }
 
         /* Styled markdown output inside bot messages */
+        .message.bot h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #191d19;
+            margin: 4px 0 12px;
+            line-height: 1.2;
+        }
+
         .message.bot h2 {
             font-size: 18px;
             font-weight: 700;
@@ -1237,6 +1245,8 @@
             if (!text) return '';
 
             // Heading
+            const h1 = text.match(/^# (.+)$/);
+            if (h1) return `<h1>${applyInline(h1[1])}</h1>`;
             const h2 = text.match(/^## (.+)$/);
             if (h2) return `<h2>${applyInline(h2[1])}</h2>`;
             const h3 = text.match(/^### (.+)$/);
