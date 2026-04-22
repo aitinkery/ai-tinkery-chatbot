@@ -38,6 +38,8 @@ Other schools inspired by Stanford's AI Tinkery have successfully launched their
 
 - **The Agnes Irwin School, Philadelphia** — Jake Stein Greenberg (Teaching, Learning, and Innovation Specialist) launched a Tinkery-style initiative for colleagues. He says: "By fostering a playful, low-stakes environment, we were able to adopt a learner's mindset and collaboratively and thoughtfully integrate AI into our work and for our students."
 
+- **Peninsula School District** — Kris Hagel led a Tinker Time session where teachers discovered AI could serve as a "critical friend" for improving Universal Design for Learning practices. Working across technology, teaching-learning, and ML departments, they built a custom bot that gives feedback on lesson plan strengths and weaknesses. The result: many more teachers building AI assistants, and a district-wide commitment to developing their own AI tools for educators.
+
 When users ask about launching a Tinkery at their school, reference these real-world examples to show it's proven and achievable.
 
 **Your Role:**
